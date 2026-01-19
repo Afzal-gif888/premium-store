@@ -10,40 +10,65 @@ const AnnouncementsPage = () => {
     // Form State
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [image, setImage] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
+    const [preview, setPreview] = useState(null);
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
+            setImageFile(file);
+            // Create preview
             const reader = new FileReader();
             reader.onloadend = () => {
-                setImage(reader.result);
+                setPreview(reader.result);
             };
             reader.readAsDataURL(file);
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!title || !image) {
+        if (!title || !imageFile) {
             alert("Title and Image are required");
             return;
         }
 
-        const newAnnouncement = {
-            id: Date.now().toString(),
-            title,
-            description,
-            image, // Base64
-            createdAt: new Date().toISOString()
-        };
+        try {
+            // 1. Upload Image
+            const formData = new FormData();
+            formData.append('image', imageFile);
 
-        dispatch(addAnnouncement(newAnnouncement));
+            // We need a way to upload. Since we are inside a component, we can use fetch/axios directly or a thunk.
+            // For simplicity, let's use fetch here or assumption that we have an upload util.
+            // But we don't have an upload thunk. Let's do a direct fetch for upload.
+            const uploadRes = await fetch('http://localhost:5000/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const uploadData = await uploadRes.json();
 
-        // Reset
-        setTitle('');
-        setDescription('');
-        setImage(null);
+            if (!uploadRes.ok) throw new Error(uploadData.message || 'Upload failed');
+
+            // 2. Create Announcement
+            const newAnnouncement = {
+                title,
+                description,
+                image: uploadData.url,
+            };
+
+            await dispatch(addAnnouncement(newAnnouncement)).unwrap();
+
+            // Reset
+            setTitle('');
+            setDescription('');
+            setImageFile(null);
+            setPreview(null);
+            alert('Announcement Published!');
+
+        } catch (error) {
+            console.error(error);
+            alert('Failed to publish: ' + error.message);
+        }
     };
 
     const handleDelete = (id) => {
@@ -83,9 +108,9 @@ const AnnouncementsPage = () => {
                     <div>
                         <label className="block text-sm font-medium mb-1">Hero Image</label>
                         <input type="file" accept="image/*" onChange={handleImageUpload} />
-                        {image && (
+                        {preview && (
                             <div className="mt-2 w-full h-48 bg-gray-100 rounded overflow-hidden">
-                                <img src={image} alt="Preview" className="w-full h-full object-cover" />
+                                <img src={preview} alt="Preview" className="w-full h-full object-cover" />
                             </div>
                         )}
                     </div>

@@ -59,7 +59,9 @@
   "scripts": {
     "start": "vite",
     "build": "vite build --sourcemap",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "server": "node server/index.js",
+    "seed": "node server/seed.js"
   },
   "eslintConfig": {
     "extends": [

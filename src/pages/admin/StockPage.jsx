@@ -17,23 +17,36 @@ const StockPage = () => {
         name: '',
         category: '',
         price: '',
-        images: [], // array of base64 strings
+        images: [], // array of URLs
         sizes: SIZES.reduce((acc, size) => ({ ...acc, [size]: 0 }), {})
     };
 
     const [formData, setFormData] = useState(initialFormState);
 
-    const handleImageUpload = (e) => {
+    const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setFormData(prev => ({
-                    ...prev,
-                    images: [...prev.images, reader.result]
-                }));
-            };
-            reader.readAsDataURL(file);
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const res = await fetch('http://localhost:5000/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    setFormData(prev => ({
+                        ...prev,
+                        images: [...prev.images, data.url]
+                    }));
+                } else {
+                    alert('Upload failed: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Upload Error', error);
+                alert('Upload failed');
+            }
         }
     };
 
@@ -59,15 +72,14 @@ const StockPage = () => {
         }
 
         const productData = {
-            id: editId || Date.now().toString(),
             ...formData,
             price: parseFloat(formData.price),
-            isBestseller: editId ? products.find(p => p.id === editId)?.isBestseller : false,
-            createdAt: new Date().toISOString()
+            // isBestseller maintained from existing or default false.
+            isBestseller: editId ? products.find(p => p._id === editId)?.isBestseller : false
         };
 
         if (editId) {
-            dispatch(updateProduct(productData));
+            dispatch(updateProduct({ id: editId, data: productData }));
         } else {
             dispatch(addProduct(productData));
         }
@@ -83,7 +95,7 @@ const StockPage = () => {
             images: product.images || [],
             sizes: product.sizes || SIZES.reduce((acc, size) => ({ ...acc, [size]: 0 }), {})
         });
-        setEditId(product.id);
+        setEditId(product._id);
         setIsEditing(true);
     };
 
@@ -200,7 +212,7 @@ const StockPage = () => {
                         {products.map(product => {
                             const totalStock = product.sizes ? Object.values(product.sizes).reduce((a, b) => a + b, 0) : 0;
                             return (
-                                <tr key={product.id}>
+                                <tr key={product._id}>
                                     <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3">
                                         {product.images?.[0] && (
                                             <img src={product.images[0]} alt="" className="h-10 w-10 rounded object-cover" />
@@ -215,7 +227,7 @@ const StockPage = () => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{totalStock}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <button onClick={() => handleEdit(product)} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
-                                        <button onClick={() => handleDelete(product.id)} className="text-red-600 hover:text-red-900">Delete</button>
+                                        <button onClick={() => handleDelete(product._id)} className="text-red-600 hover:text-red-900">Delete</button>
                                     </td>
                                 </tr>
                             );

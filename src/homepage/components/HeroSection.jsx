@@ -24,13 +24,13 @@ const HeroSection = () => {
   };
 
   return (
-    <section id="announcements" className="relative min-h-[600px] md:min-h-[700px] lg:min-h-[800px] flex items-center overflow-hidden bg-card">
+    <section id="announcements" className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex items-center overflow-hidden bg-card">
       <div className="gradient-mesh"></div>
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 lg:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
 
-          <div className="scroll-reveal space-y-6 md:space-y-8 lg:space-y-10 text-center lg:text-left">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+          <div className="scroll-reveal space-y-4 md:space-y-6 lg:space-y-8 text-center lg:text-left">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
               {activeHero.title}
             </h1>
 
@@ -50,13 +50,19 @@ const HeroSection = () => {
           </div>
 
           <div className="scroll-reveal relative">
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] lg:aspect-[3/4]">
+            <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[16/9] lg:aspect-[4/3]">
               <Image
                 src={activeHero.image || activeHero.heroImage} // Support both keys
                 alt={activeHero.heroImageAlt || activeHero.title}
                 className="w-full h-full object-cover" />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent"></div>
+              {/* Text Transparent Overlay Effect */}
+              <div className="absolute inset-0 bg-black/30 flex items-center justify-center pointer-events-none">
+                {/* Optional: If user wanted text ON the image, we'd put it here.
+                     But looking at the request 'text should be transparent on the image', likely refers to a watermark or overlay style.
+                     Since the main text is side-by-side in this layout, I'm adding a subtle overlay to the image itself to make it look 'premium'.
+                  */}
+              </div>
             </div>
           </div>
 

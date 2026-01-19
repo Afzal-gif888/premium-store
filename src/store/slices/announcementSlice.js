@@ -1,36 +1,53 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 
-const loadAnnouncements = () => {
-    const saved = localStorage.getItem('announcementsData');
-    return saved ? JSON.parse(saved) : [];
-};
+const API_URL = 'http://localhost:5000/api/announcements';
+
+export const fetchAnnouncements = createAsyncThunk('announcements/fetchAnnouncements', async () => {
+    const response = await axios.get(API_URL);
+    return response.data;
+});
+
+export const addAnnouncement = createAsyncThunk('announcements/addAnnouncement', async (announcement) => {
+    const response = await axios.post(API_URL, announcement);
+    return response.data;
+});
+
+export const deleteAnnouncement = createAsyncThunk('announcements/deleteAnnouncement', async (id) => {
+    await axios.delete(`${API_URL}/${id}`);
+    return id;
+});
 
 const initialState = {
-    items: loadAnnouncements(),
+    items: [],
+    status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+    error: null
 };
 
 const announcementSlice = createSlice({
     name: 'announcements',
     initialState,
-    reducers: {
-        addAnnouncement: (state, action) => {
-            // For Hero section, we might simple act as a list, or the latest one is the Hero.
-            state.items.unshift(action.payload); // Add to top
-            localStorage.setItem('announcementsData', JSON.stringify(state.items));
-        },
-        deleteAnnouncement: (state, action) => {
-            state.items = state.items.filter(a => a.id !== action.payload);
-            localStorage.setItem('announcementsData', JSON.stringify(state.items));
-        },
-        updateAnnouncement: (state, action) => {
-            const index = state.items.findIndex(a => a.id === action.payload.id);
-            if (index !== -1) {
-                state.items[index] = action.payload;
-                localStorage.setItem('announcementsData', JSON.stringify(state.items));
-            }
-        }
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchAnnouncements.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchAnnouncements.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.items = action.payload;
+            })
+            .addCase(fetchAnnouncements.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+            .addCase(addAnnouncement.fulfilled, (state, action) => {
+                state.items.unshift(action.payload);
+            })
+            .addCase(deleteAnnouncement.fulfilled, (state, action) => {
+                state.items = state.items.filter(a => a._id !== action.payload);
+            });
     },
 });
 
-export const { addAnnouncement, deleteAnnouncement, updateAnnouncement } = announcementSlice.actions;
 export default announcementSlice.reducer;
