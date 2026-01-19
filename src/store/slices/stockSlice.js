@@ -43,16 +43,14 @@ export const deleteProduct = createAsyncThunk('stock/deleteProduct', async (id, 
     }
 });
 
-export const toggleBestseller = createAsyncThunk('stock/toggleBestseller', async ({ id, isBestseller }) => {
-    // We assume the caller sends the inverted value or we fetch the product first.
-    // Simplifying: The Admin UI should probably pass the full updated object or we patch.
-    // For now, let's fetch, toggle, and update (not efficient but safe) or just use updateProduct.
-    // Actually, let's make this use updateProduct internally in the UI, or just patch here.
-    // Creating a dedicated PATCH endpoint would be better, but reusing PUT for now is okay if we send full data.
-    // Let's assume the UI handles the logic and calls updateProduct. 
-    // BUT to keep the action name:
-    const response = await axios.put(`${API_URL}/${id}`, { isBestseller });
-    return response.data;
+export const toggleBestseller = createAsyncThunk('stock/toggleBestseller', async ({ id, isBestseller }, { rejectWithValue }) => {
+    try {
+        const response = await axios.patch(`${API_URL}/${id}/bestseller`, { isBestseller });
+        return response.data;
+    } catch (error) {
+        console.error('Failed to toggle bestseller:', error.message);
+        return rejectWithValue(error.response?.data || 'Failed to toggle bestseller');
+    }
 });
 
 const initialState = {
@@ -95,6 +93,10 @@ const stockSlice = createSlice({
                 if (index !== -1) {
                     state.products[index] = action.payload;
                 }
+            })
+            .addCase(toggleBestseller.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload || action.error.message;
             });
     },
 });

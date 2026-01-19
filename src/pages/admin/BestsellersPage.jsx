@@ -22,17 +22,17 @@ const BestsellersPage = () => {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {products.map(product => (
-                            <tr key={product.id}>
+                            <tr key={product._id || product.id}>
                                 <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3">
-                                    {product.images?.[0] && (
-                                        <img src={product.images[0]} alt="" className="h-10 w-10 rounded object-cover" />
+                                    {product.image && (
+                                        <img src={product.image} alt="" className="h-10 w-10 rounded object-cover" />
                                     )}
                                     <span className="font-medium">{product.name}</span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.price}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-center">
                                     <button
-                                        onClick={() => dispatch(toggleBestseller(product.id))}
+                                        onClick={() => dispatch(toggleBestseller({ id: product._id || product.id, isBestseller: !product.isBestseller }))}
                                         className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${product.isBestseller ? 'bg-indigo-600' : 'bg-gray-200'}`}
                                     >
                                         <span className="sr-only">Use setting</span>
