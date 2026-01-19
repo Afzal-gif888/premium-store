@@ -7,12 +7,12 @@ const CallToAction = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-12 md:py-16 lg:py-20 bg-primary text-primary-foreground relative overflow-hidden">
+    <section id="contact" className="py-12 md:py-16 lg:py-20 bg-primary text-primary-foreground relative overflow-hidden">
       <div className="gradient-mesh opacity-10"></div>
-      
+
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
         <div className="text-center scroll-reveal">
-          
+
           <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-accent/20 mb-6 md:mb-8">
             <Icon name="Store" size={40} color="var(--color-accent)" strokeWidth={2} />
           </div>
@@ -26,10 +26,10 @@ const CallToAction = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-center">
-            <Button 
-              variant="default" 
+            <Button
+              variant="default"
               size="lg"
-              onClick={() => navigate('/collection')}
+              onClick={() => document.getElementById('collections')?.scrollIntoView({ behavior: 'smooth' })}
               iconName="ShoppingBag"
               iconPosition="left"
               className="bg-accent text-accent-foreground hover:bg-accent/90"
@@ -37,10 +37,10 @@ const CallToAction = () => {
               Browse Collection
             </Button>
 
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="lg"
-              onClick={() => navigate('/announcements')}
+              onClick={() => document.getElementById('announcements')?.scrollIntoView({ behavior: 'smooth' })}
               iconName="Bell"
               iconPosition="left"
               className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10"

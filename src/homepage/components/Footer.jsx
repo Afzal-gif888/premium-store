@@ -1,29 +1,58 @@
 import React from 'react';
 import Icon from 'components/AppIcon';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Footer = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const currentYear = new Date()?.getFullYear();
+
+  const handleNavigation = (path) => {
+    // If path is absolute/external or strict route (not part of single page scroll sections)
+    if (!path.startsWith('#') && path !== '/') {
+      navigate(path);
+      return;
+    }
+
+    if (location.pathname === '/') {
+      // On homepage
+      if (path === '/') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        const elementId = path.replace('#', '');
+        const element = document.getElementById(elementId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    } else {
+      // Not on homepage
+      if (path === '/') {
+        navigate('/');
+      } else {
+        navigate('/', { state: { scrollTo: path.replace('#', '') } });
+      }
+    }
+  };
 
   const footerLinks = {
     shop: [
-      { label: "Collection", path: "/collection" },
-      { label: "New Arrivals", path: "/collection" },
-      { label: "Sale Items", path: "/collection" },
-      { label: "Gift Cards", path: "/collection" }
+      { label: "Collection", path: "#collections" },
+      { label: "New Arrivals", path: "#collections" },
+      { label: "Sale Items", path: "#collections" },
+      { label: "Gift Cards", path: "#" } // Placeholder
     ],
     company: [
-      { label: "About Us", path: "/homepage" },
-      { label: "Announcements", path: "/announcements" },
-      { label: "Store Locations", path: "/homepage" },
-      { label: "Contact", path: "/homepage" }
+      { label: "About Us", path: "/" },
+      { label: "Announcements", path: "#announcements" },
+      { label: "Store Locations", path: "#contact" },
+      { label: "Contact", path: "#contact" }
     ],
     support: [
-      { label: "Size Guide", path: "/homepage" },
-      { label: "Care Instructions", path: "/homepage" },
-      { label: "Returns Policy", path: "/homepage" },
-      { label: "FAQ", path: "/homepage" }
+      { label: "Size Guide", path: "#" }, // Placeholder
+      { label: "Care Instructions", path: "#" }, // Placeholder
+      { label: "Returns Policy", path: "#" }, // Placeholder
+      { label: "FAQ", path: "#" } // Placeholder
     ]
   };
 
@@ -37,9 +66,9 @@ const Footer = () => {
   return (
     <footer className="bg-card border-t border-border">
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20">
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-8 md:mb-12">
-          
+
           <div className="space-y-4 md:space-y-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -70,8 +99,8 @@ const Footer = () => {
               {footerLinks?.shop?.map((link) => (
                 <li key={link?.label}>
                   <button
-                    onClick={() => navigate(link?.path)}
-                    className="text-sm md:text-base text-muted-foreground hover:text-accent transition-colors"
+                    onClick={() => handleNavigation(link?.path)}
+                    className="text-sm md:text-base text-muted-foreground hover:text-accent transition-colors text-left"
                   >
                     {link?.label}
                   </button>
@@ -86,8 +115,8 @@ const Footer = () => {
               {footerLinks?.company?.map((link) => (
                 <li key={link?.label}>
                   <button
-                    onClick={() => navigate(link?.path)}
-                    className="text-sm md:text-base text-muted-foreground hover:text-accent transition-colors"
+                    onClick={() => handleNavigation(link?.path)}
+                    className="text-sm md:text-base text-muted-foreground hover:text-accent transition-colors text-left"
                   >
                     {link?.label}
                   </button>
@@ -102,8 +131,8 @@ const Footer = () => {
               {footerLinks?.support?.map((link) => (
                 <li key={link?.label}>
                   <button
-                    onClick={() => navigate(link?.path)}
-                    className="text-sm md:text-base text-muted-foreground hover:text-accent transition-colors"
+                    onClick={() => handleNavigation(link?.path)}
+                    className="text-sm md:text-base text-muted-foreground hover:text-accent transition-colors text-left"
                   >
                     {link?.label}
                   </button>

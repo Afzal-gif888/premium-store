@@ -7,4 +7,11 @@ import "./styles/index.css";
 const container = document.getElementById("root");
 const root = createRoot(container);
 
-root.render(<App />);
+import { Provider } from 'react-redux';
+import store from './store/store';
+
+root.render(
+    <Provider store={store}>
+        <App />
+    </Provider>
+);

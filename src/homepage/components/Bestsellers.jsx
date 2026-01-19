@@ -1,0 +1,71 @@
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import Image from 'components/AppImage';
+import Icon from 'components/AppIcon';
+
+const Bestsellers = () => {
+    const navigate = useNavigate();
+    const products = useSelector(state => state.stock.products);
+
+    // Filter by bestseller flag
+    const bestsellers = products.filter(p => p.isBestseller);
+
+    if (bestsellers.length === 0) return null; // Don't show section if empty
+
+    const handleProductClick = (productId) => {
+        navigate(`/product/${productId}`);
+    };
+
+    return (
+        <section id="bestsellers" className="py-12 md:py-16 lg:py-20 bg-gray-50">
+            <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+                <div className="text-center mb-8 md:mb-12 lg:mb-16 scroll-reveal">
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 md:mb-6">
+                        Bestsellers
+                    </h2>
+                    <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto">
+                        Customer favorites, verified by sales data.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                    {bestsellers.map((product, index) => (
+                        <div
+                            key={product.id}
+                            className="product-card scroll-reveal cursor-pointer"
+                            style={{ animationDelay: `${index * 100}ms` }}
+                            onClick={() => handleProductClick(product.id)}
+                        >
+                            <div className="relative overflow-hidden aspect-square bg-white">
+                                {product.images?.[0] ? (
+                                    <Image
+                                        src={product.images[0]}
+                                        alt={product.name}
+                                        className="product-card-image hover:scale-110 transition-transform duration-500"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                        <Icon name="Image" size={48} />
+                                    </div>
+                                )}
+                                <div className="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded">
+                                    BESTSELLER
+                                </div>
+                            </div>
+                            <div className="product-card-content">
+                                <h3 className="product-card-title line-clamp-2 mb-2">{product.name}</h3>
+                                <div className="flex items-center justify-between">
+                                    <span className="product-card-price">${product.price?.toFixed(2)}</span>
+                                    <span className="text-xs text-blue-600 font-medium">View Details</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+};
+
+export default Bestsellers;
