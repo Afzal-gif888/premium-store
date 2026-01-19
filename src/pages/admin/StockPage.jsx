@@ -17,9 +17,9 @@ const StockPage = () => {
         name: '',
         category: '',
         price: '',
-        images: [], // array of URLs
-        sizes: SIZES.reduce((acc, size) => ({ ...acc, [size]: 0 }), {}),
-        isBestseller: false
+        image: '', // CHANGED: Single image URL instead of array
+        sizes: SIZES.reduce((acc, size) => ({ ...acc, [size]: 0 }), {})
+        // REMOVED: isBestseller - controlled only from Bestseller page
     };
 
     const [formData, setFormData] = useState(initialFormState);
@@ -39,7 +39,7 @@ const StockPage = () => {
                 if (res.ok) {
                     setFormData(prev => ({
                         ...prev,
-                        images: [...prev.images, data.url]
+                        image: data.url // CHANGED: Set single image instead of array
                     }));
                 } else {
                     alert('Upload failed: ' + data.message);
@@ -51,10 +51,10 @@ const StockPage = () => {
         }
     };
 
-    const handleRemoveImage = (index) => {
+    const handleRemoveImage = () => {
         setFormData(prev => ({
             ...prev,
-            images: prev.images.filter((_, i) => i !== index)
+            image: '' // CHANGED: Clear single image
         }));
     };
 
@@ -67,16 +67,26 @@ const StockPage = () => {
             alert("At least one size must have quantity greater than zero.");
             return;
         }
-        if (formData.images.length === 0) {
-            alert("At least one image is required.");
+        if (!formData.image) { // CHANGED: Check single image
+            alert("Image is required.");
             return;
         }
 
+        // CRITICAL: Convert sizes object to array format for backend
+        const sizesArray = Object.entries(formData.sizes)
+            .filter(([size, stock]) => parseInt(stock || 0) > 0)
+            .map(([size, stock]) => ({
+                size: `US ${size}`,
+                stock: parseInt(stock)
+            }));
+
         const productData = {
-            ...formData,
+            name: formData.name,
+            category: formData.category,
             price: parseFloat(formData.price),
-            // isBestseller maintained from existing or default false.
-            isBestseller: formData.isBestseller || false
+            image: formData.image, // CHANGED: Single image
+            sizes: sizesArray // CHANGED: Array format
+            // REMOVED: isBestseller
         };
 
         if (editId) {
@@ -89,13 +99,19 @@ const StockPage = () => {
     };
 
     const handleEdit = (product) => {
+        // Convert backend array format back to object for form
+        const sizesObject = SIZES.reduce((acc, size) => {
+            const sizeEntry = product.sizes?.find(s => s.size === `US ${size}`);
+            return { ...acc, [size]: sizeEntry ? sizeEntry.stock : 0 };
+        }, {});
+
         setFormData({
             name: product.name,
             category: product.category,
             price: product.price,
-            images: product.images || [],
-            sizes: product.sizes || SIZES.reduce((acc, size) => ({ ...acc, [size]: 0 }), {}),
-            isBestseller: product.isBestseller || false
+            image: product.image || '', // CHANGED: Single image
+            sizes: sizesObject
+            // REMOVED: isBestseller
         });
         setEditId(product._id);
         setIsEditing(true);
@@ -151,34 +167,23 @@ const StockPage = () => {
                             />
                         </div>
 
-                        <div className="flex items-center gap-2 py-2">
-                            <input
-                                type="checkbox"
-                                id="isBestseller"
-                                className="w-4 h-4"
-                                checked={formData.isBestseller || false}
-                                onChange={e => setFormData({ ...formData, isBestseller: e.target.checked })}
-                            />
-                            <label htmlFor="isBestseller" className="text-sm font-medium">Mark as Bestseller</label>
-                        </div>
+                        {/* REMOVED: Bestseller checkbox - controlled only from Bestseller page */}
 
                         <div>
-                            <label className="block text-sm font-medium mb-2">Images</label>
+                            <label className="block text-sm font-medium mb-2">Product Image</label>
                             <input type="file" accept="image/*" onChange={handleImageUpload} className="mb-2" />
-                            <div className="flex gap-2 flex-wrap">
-                                {formData.images.map((img, idx) => (
-                                    <div key={idx} className="relative w-24 h-24 border rounded overflow-hidden group">
-                                        <img src={img} alt="preview" className="w-full h-full object-cover" />
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRemoveImage(idx)}
-                                            className="absolute top-0 right-0 bg-red-500 text-white p-1 text-xs opacity-0 group-hover:opacity-100"
-                                        >
-                                            X
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
+                            {formData.image && (
+                                <div className="relative w-32 h-32 border rounded overflow-hidden group">
+                                    <img src={formData.image} alt="preview" className="w-full h-full object-cover" />
+                                    <button
+                                        type="button"
+                                        onClick={handleRemoveImage}
+                                        className="absolute top-0 right-0 bg-red-500 text-white p-1 text-xs opacity-0 group-hover:opacity-100"
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         <div>
@@ -223,12 +228,15 @@ const StockPage = () => {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {products.map(product => {
-                            const totalStock = product.sizes ? Object.values(product.sizes).reduce((a, b) => a + b, 0) : 0;
+                            // Calculate total stock from sizes array
+                            const totalStock = Array.isArray(product.sizes)
+                                ? product.sizes.reduce((sum, s) => sum + (s.stock || 0), 0)
+                                : 0;
                             return (
                                 <tr key={product._id}>
                                     <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3">
-                                        {product.images?.[0] && (
-                                            <img src={product.images[0]} alt="" className="h-10 w-10 rounded object-cover" />
+                                        {product.image && (
+                                            <img src={product.image} alt="" className="h-10 w-10 rounded object-cover" />
                                         )}
                                         <span className="font-medium">{product.name}</span>
                                         {product.isBestseller && (

@@ -17,14 +17,22 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     sizes: [{
-        size: String,
-        stock: Number
+        size: {
+            type: String,
+            required: true
+        },
+        stock: {
+            type: Number,
+            required: true,
+            min: 0,
+            default: 0
+        }
     }],
     image: {
-        type: String
+        type: String,
+        required: true
     },
-    images: [String],
-    isBestseller: { // Kept for frontend compatibility
+    isBestseller: {
         type: Boolean,
         default: false
     },

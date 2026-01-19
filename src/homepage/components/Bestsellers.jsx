@@ -37,9 +37,9 @@ const Bestsellers = () => {
                                 onClick={() => handleProductClick(product._id || product.id)}
                             >
                                 <div className="relative overflow-hidden aspect-square bg-white">
-                                    {product.images?.[0] ? (
+                                    {product.image ? (
                                         <Image
-                                            src={product.images[0]}
+                                            src={product.image}
                                             alt={product.name}
                                             className="product-card-image hover:scale-110 transition-transform duration-500"
                                         />

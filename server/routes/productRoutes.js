@@ -20,7 +20,15 @@ router.get('/', async (req, res) => {
 // @access  Public
 router.post('/', async (req, res) => {
     try {
-        const { name, brand, category, price, sizes, image, images, isBestseller } = req.body;
+        const { name, brand, category, price, sizes, image } = req.body;
+
+        // Validation
+        if (!image) {
+            return res.status(400).json({ message: 'Image is required' });
+        }
+        if (!sizes || !Array.isArray(sizes) || sizes.length === 0) {
+            return res.status(400).json({ message: 'Sizes must be a non-empty array' });
+        }
 
         const product = new Product({
             name,
@@ -29,8 +37,7 @@ router.post('/', async (req, res) => {
             price,
             sizes,
             image,
-            images,
-            isBestseller
+            isBestseller: false // Always default to false on creation
         });
 
         const createdProduct = await product.save();
@@ -45,7 +52,7 @@ router.post('/', async (req, res) => {
 // @access  Public
 router.put('/:id', async (req, res) => {
     try {
-        const { name, brand, category, price, sizes, image, images, isBestseller } = req.body;
+        const { name, brand, category, price, sizes, image } = req.body;
         const product = await Product.findById(req.params.id);
 
         if (product) {
@@ -55,9 +62,28 @@ router.put('/:id', async (req, res) => {
             product.price = price !== undefined ? price : product.price;
             product.sizes = sizes || product.sizes;
             product.image = image || product.image;
-            if (images) product.images = images;
-            if (isBestseller !== undefined) product.isBestseller = isBestseller;
+            // Note: isBestseller NOT updated here - use PATCH endpoint
 
+            const updatedProduct = await product.save();
+            res.json(updatedProduct);
+        } else {
+            res.status(404).json({ message: 'Product not found' });
+        }
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+// @desc    Toggle bestseller status
+// @route   PATCH /api/products/:id/bestseller
+// @access  Public
+router.patch('/:id/bestseller', async (req, res) => {
+    try {
+        const { isBestseller } = req.body;
+        const product = await Product.findById(req.params.id);
+
+        if (product) {
+            product.isBestseller = isBestseller;
             const updatedProduct = await product.save();
             res.json(updatedProduct);
         } else {

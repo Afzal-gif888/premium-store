@@ -26,18 +26,18 @@ const ProductDetails = () => {
     );
   }
 
-  // Transform sizes object { '7': 5, '8': 0 } to array format expected by logic
-  const sizeList = Object.entries(product.sizes || {}).map(([size, qty]) => ({
-    size,
-    stock: qty,
-    available: qty > 0,
-    fitNote: qty > 0 ? `${qty} pairs available` : 'Out of Stock'
-  }));
+  // Handle array format from backend: [{ size: "US 7", stock: 10 }]
+  const sizeList = Array.isArray(product.sizes)
+    ? product.sizes.map(s => ({
+      size: s.size,
+      stock: s.stock,
+      available: s.stock > 0,
+      fitNote: s.stock > 0 ? `${s.stock} pairs available` : 'Out of Stock'
+    }))
+    : [];
 
-  // Main image + others
-  const allImages = product.images && product.images.length > 0
-    ? product.images.map(url => ({ url, alt: product.name }))
-    : [{ url: 'https://via.placeholder.com/400', alt: 'No Image' }];
+  // Single image from backend
+  const productImage = product.image || 'https://via.placeholder.com/400';
 
   return (
     <div className="min-h-screen bg-white">
@@ -54,17 +54,10 @@ const ProductDetails = () => {
           <div className="space-y-4">
             <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
               <img
-                src={allImages[0].url}
-                alt={allImages[0].alt}
+                src={productImage}
+                alt={product.name}
                 className="w-full h-full object-cover"
               />
-            </div>
-            <div className="grid grid-cols-4 gap-2">
-              {allImages.slice(1).map((img, idx) => (
-                <div key={idx} className="aspect-square bg-gray-100 rounded overflow-hidden">
-                  <img src={img.url} alt={img.alt} className="w-full h-full object-cover" />
-                </div>
-              ))}
             </div>
           </div>
 
