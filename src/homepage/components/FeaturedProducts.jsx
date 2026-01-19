@@ -8,6 +8,11 @@ const FeaturedProducts = () => {
   const navigate = useNavigate();
   const products = useSelector(state => state.stock.products);
 
+  console.log('FeaturedProducts rendering, products count:', products.length);
+  if (products.length > 0) {
+    console.log('First product in FeaturedProducts:', products[0]);
+  }
+
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
   };
