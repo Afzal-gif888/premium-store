@@ -8,7 +8,8 @@ const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const products = useSelector(state => state.stock.products);
-  const product = products.find(p => p.id === id);
+  // MongoDB uses _id, frontend might use id. Check both.
+  const product = products.find(p => (p._id === id) || (p.id === id));
 
   const [selectedSize, setSelectedSize] = useState(null);
 

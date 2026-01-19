@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Header from 'components/Header';
 import HeroSection from './components/HeroSection';
 import FeaturedProducts from './components/FeaturedProducts';
-import TrustSignals from './components/TrustSignals';
+import Bestsellers from './components/Bestsellers';
 import AnnouncementPreview from './components/Announcementpreview';
 import CallToAction from './components/CallToAction';
 import Footer from './components/Footer';
@@ -54,7 +54,7 @@ const Homepage = () => {
       <main className="main-content">
         <HeroSection />
         <FeaturedProducts />
-        <TrustSignals />
+        <Bestsellers />
         <AnnouncementPreview />
         <CallToAction />
       </main>

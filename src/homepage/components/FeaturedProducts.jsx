@@ -33,10 +33,10 @@ const FeaturedProducts = () => {
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {products.map((product, index) => (
               <div
-                key={product.id}
+                key={product._id || product.id}
                 className="product-card scroll-reveal cursor-pointer"
                 style={{ animationDelay: `${index * 100}ms` }}
-                onClick={() => handleProductClick(product.id)}>
+                onClick={() => handleProductClick(product._id || product.id)}>
 
                 <div className="relative overflow-hidden aspect-square bg-gray-100">
                   {product.images?.[0] ? (
@@ -71,7 +71,7 @@ const FeaturedProducts = () => {
                       className="flex items-center gap-2 text-sm font-medium text-accent hover:text-accent/80 transition-colors"
                       onClick={(e) => {
                         e?.stopPropagation();
-                        handleProductClick(product.id);
+                        handleProductClick(product._id || product.id);
                       }}>
                       View
                       <Icon name="ArrowRight" size={16} />

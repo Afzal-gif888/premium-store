@@ -11,8 +11,6 @@ const Bestsellers = () => {
     // Filter by bestseller flag
     const bestsellers = products.filter(p => p.isBestseller);
 
-    if (bestsellers.length === 0) return null; // Don't show section if empty
-
     const handleProductClick = (productId) => {
         navigate(`/product/${productId}`);
     };
@@ -29,40 +27,46 @@ const Bestsellers = () => {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-                    {bestsellers.map((product, index) => (
-                        <div
-                            key={product.id}
-                            className="product-card scroll-reveal cursor-pointer"
-                            style={{ animationDelay: `${index * 100}ms` }}
-                            onClick={() => handleProductClick(product.id)}
-                        >
-                            <div className="relative overflow-hidden aspect-square bg-white">
-                                {product.images?.[0] ? (
-                                    <Image
-                                        src={product.images[0]}
-                                        alt={product.name}
-                                        className="product-card-image hover:scale-110 transition-transform duration-500"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                        <Icon name="Image" size={48} />
+                {bestsellers.length > 0 ? (
+                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                        {bestsellers.map((product, index) => (
+                            <div
+                                key={product._id || product.id}
+                                className="product-card scroll-reveal cursor-pointer"
+                                style={{ animationDelay: `${index * 100}ms` }}
+                                onClick={() => handleProductClick(product._id || product.id)}
+                            >
+                                <div className="relative overflow-hidden aspect-square bg-white">
+                                    {product.images?.[0] ? (
+                                        <Image
+                                            src={product.images[0]}
+                                            alt={product.name}
+                                            className="product-card-image hover:scale-110 transition-transform duration-500"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                            <Icon name="Image" size={48} />
+                                        </div>
+                                    )}
+                                    <div className="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded">
+                                        BESTSELLER
                                     </div>
-                                )}
-                                <div className="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded">
-                                    BESTSELLER
+                                </div>
+                                <div className="product-card-content">
+                                    <h3 className="product-card-title line-clamp-2 mb-2">{product.name}</h3>
+                                    <div className="flex items-center justify-between">
+                                        <span className="product-card-price">${product.price?.toFixed(2)}</span>
+                                        <span className="text-xs text-blue-600 font-medium">View Details</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="product-card-content">
-                                <h3 className="product-card-title line-clamp-2 mb-2">{product.name}</h3>
-                                <div className="flex items-center justify-between">
-                                    <span className="product-card-price">${product.price?.toFixed(2)}</span>
-                                    <span className="text-xs text-blue-600 font-medium">View Details</span>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-12 text-muted-foreground">
+                        <p>No bestsellers available at the moment. Check back soon!</p>
+                    </div>
+                )}
             </div>
         </section>
     );

@@ -3,24 +3,44 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/products';
 
-export const fetchProducts = createAsyncThunk('stock/fetchProducts', async () => {
-    const response = await axios.get(API_URL);
-    return response.data;
+export const fetchProducts = createAsyncThunk('stock/fetchProducts', async (_, { rejectWithValue }) => {
+    try {
+        const response = await axios.get(API_URL);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to fetch products:', error.message);
+        return rejectWithValue(error.response?.data || 'Failed to load products');
+    }
 });
 
-export const addProduct = createAsyncThunk('stock/addProduct', async (product) => {
-    const response = await axios.post(API_URL, product);
-    return response.data;
+export const addProduct = createAsyncThunk('stock/addProduct', async (product, { rejectWithValue }) => {
+    try {
+        const response = await axios.post(API_URL, product);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to add product:', error.message);
+        return rejectWithValue(error.response?.data || 'Failed to add product');
+    }
 });
 
-export const updateProduct = createAsyncThunk('stock/updateProduct', async ({ id, data }) => {
-    const response = await axios.put(`${API_URL}/${id}`, data);
-    return response.data;
+export const updateProduct = createAsyncThunk('stock/updateProduct', async ({ id, data }, { rejectWithValue }) => {
+    try {
+        const response = await axios.put(`${API_URL}/${id}`, data);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to update product:', error.message);
+        return rejectWithValue(error.response?.data || 'Failed to update product');
+    }
 });
 
-export const deleteProduct = createAsyncThunk('stock/deleteProduct', async (id) => {
-    await axios.delete(`${API_URL}/${id}`);
-    return id;
+export const deleteProduct = createAsyncThunk('stock/deleteProduct', async (id, { rejectWithValue }) => {
+    try {
+        await axios.delete(`${API_URL}/${id}`);
+        return id;
+    } catch (error) {
+        console.error('Failed to delete product:', error.message);
+        return rejectWithValue(error.response?.data || 'Failed to delete product');
+    }
 });
 
 export const toggleBestseller = createAsyncThunk('stock/toggleBestseller', async ({ id, isBestseller }) => {

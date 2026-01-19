@@ -3,19 +3,34 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/announcements';
 
-export const fetchAnnouncements = createAsyncThunk('announcements/fetchAnnouncements', async () => {
-    const response = await axios.get(API_URL);
-    return response.data;
+export const fetchAnnouncements = createAsyncThunk('announcements/fetchAnnouncements', async (_, { rejectWithValue }) => {
+    try {
+        const response = await axios.get(API_URL);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to fetch announcements:', error.message);
+        return rejectWithValue(error.response?.data || 'Failed to load announcements');
+    }
 });
 
-export const addAnnouncement = createAsyncThunk('announcements/addAnnouncement', async (announcement) => {
-    const response = await axios.post(API_URL, announcement);
-    return response.data;
+export const addAnnouncement = createAsyncThunk('announcements/addAnnouncement', async (announcement, { rejectWithValue }) => {
+    try {
+        const response = await axios.post(API_URL, announcement);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to add announcement:', error.message);
+        return rejectWithValue(error.response?.data || 'Failed to add announcement');
+    }
 });
 
-export const deleteAnnouncement = createAsyncThunk('announcements/deleteAnnouncement', async (id) => {
-    await axios.delete(`${API_URL}/${id}`);
-    return id;
+export const deleteAnnouncement = createAsyncThunk('announcements/deleteAnnouncement', async (id, { rejectWithValue }) => {
+    try {
+        await axios.delete(`${API_URL}/${id}`);
+        return id;
+    } catch (error) {
+        console.error('Failed to delete announcement:', error.message);
+        return rejectWithValue(error.response?.data || 'Failed to delete announcement');
+    }
 });
 
 const initialState = {
@@ -44,8 +59,16 @@ const announcementSlice = createSlice({
             .addCase(addAnnouncement.fulfilled, (state, action) => {
                 state.items.unshift(action.payload);
             })
+            .addCase(addAnnouncement.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload || action.error.message;
+            })
             .addCase(deleteAnnouncement.fulfilled, (state, action) => {
                 state.items = state.items.filter(a => a._id !== action.payload);
+            })
+            .addCase(deleteAnnouncement.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload || action.error.message;
             });
     },
 });

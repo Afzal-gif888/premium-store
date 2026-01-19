@@ -31,7 +31,7 @@ const AnnouncementPreview = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
           {pastAnnouncements.map((announcement, index) =>
             <div
-              key={announcement.id || index}
+              key={announcement._id || announcement.id || index}
               className="scroll-reveal bg-card rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300"
               style={{ animationDelay: `${index * 100}ms` }}>
 

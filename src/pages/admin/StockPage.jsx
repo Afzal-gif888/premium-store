@@ -18,7 +18,8 @@ const StockPage = () => {
         category: '',
         price: '',
         images: [], // array of URLs
-        sizes: SIZES.reduce((acc, size) => ({ ...acc, [size]: 0 }), {})
+        sizes: SIZES.reduce((acc, size) => ({ ...acc, [size]: 0 }), {}),
+        isBestseller: false
     };
 
     const [formData, setFormData] = useState(initialFormState);
@@ -75,7 +76,7 @@ const StockPage = () => {
             ...formData,
             price: parseFloat(formData.price),
             // isBestseller maintained from existing or default false.
-            isBestseller: editId ? products.find(p => p._id === editId)?.isBestseller : false
+            isBestseller: formData.isBestseller || false
         };
 
         if (editId) {
@@ -93,7 +94,8 @@ const StockPage = () => {
             category: product.category,
             price: product.price,
             images: product.images || [],
-            sizes: product.sizes || SIZES.reduce((acc, size) => ({ ...acc, [size]: 0 }), {})
+            sizes: product.sizes || SIZES.reduce((acc, size) => ({ ...acc, [size]: 0 }), {}),
+            isBestseller: product.isBestseller || false
         });
         setEditId(product._id);
         setIsEditing(true);
@@ -147,6 +149,17 @@ const StockPage = () => {
                                 onChange={e => setFormData({ ...formData, price: e.target.value })}
                                 required
                             />
+                        </div>
+
+                        <div className="flex items-center gap-2 py-2">
+                            <input
+                                type="checkbox"
+                                id="isBestseller"
+                                className="w-4 h-4"
+                                checked={formData.isBestseller || false}
+                                onChange={e => setFormData({ ...formData, isBestseller: e.target.checked })}
+                            />
+                            <label htmlFor="isBestseller" className="text-sm font-medium">Mark as Bestseller</label>
                         </div>
 
                         <div>

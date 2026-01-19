@@ -123,7 +123,7 @@ const AnnouncementsPage = () => {
             <div className="space-y-4">
                 <h2 className="text-xl font-bold">History</h2>
                 {announcements.map((item, index) => (
-                    <div key={item.id} className="bg-white p-4 rounded-lg shadow border flex gap-4 items-start relative">
+                    <div key={item._id || item.id} className="bg-white p-4 rounded-lg shadow border flex gap-4 items-start relative">
                         <div className="w-24 h-24 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
                             <img src={item.image} alt="" className="w-full h-full object-cover" />
                         </div>
@@ -136,7 +136,7 @@ const AnnouncementsPage = () => {
                             <p className="text-xs text-gray-400 mt-2">Posted: {new Date(item.createdAt).toLocaleDateString()}</p>
                         </div>
                         <button
-                            onClick={() => handleDelete(item.id)}
+                            onClick={() => handleDelete(item._id || item.id)}
                             className="text-red-500 text-sm hover:underline absolute top-4 right-4"
                         >
                             Delete

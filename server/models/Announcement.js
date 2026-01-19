@@ -1,10 +1,23 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const AnnouncementSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    description: String,
-    image: String, // Cloudinary URL
-    createdAt: { type: Date, default: Date.now }
+const announcementSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String
+    },
+    image: {
+        type: String,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 });
 
-module.exports = mongoose.model('Announcement', AnnouncementSchema);
+const Announcement = mongoose.model('Announcement', announcementSchema);
+
+export default Announcement;
