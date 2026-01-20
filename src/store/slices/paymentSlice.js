@@ -1,25 +1,58 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 
-const loadPayments = () => {
-    const saved = localStorage.getItem('paymentsData');
-    return saved ? JSON.parse(saved) : [];
+const getApiBase = () => {
+    const hostname = window.location.hostname;
+    return `${window.location.protocol}//${hostname}:5000`;
 };
 
+const API_URL = `${getApiBase()}/api/payments`;
+
+export const fetchPayments = createAsyncThunk('payments/fetchPayments', async (_, { rejectWithValue }) => {
+    try {
+        const response = await axios.get(API_URL);
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error.response?.data || 'Failed to fetch payments');
+    }
+});
+
+export const addPayment = createAsyncThunk('payments/addPayment', async (paymentData, { rejectWithValue }) => {
+    try {
+        const response = await axios.post(API_URL, paymentData);
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error.response?.data || 'Failed to add payment');
+    }
+});
+
 const initialState = {
-    history: loadPayments(),
+    history: [],
+    status: 'idle',
+    error: null
 };
 
 const paymentSlice = createSlice({
     name: 'payments',
     initialState,
-    reducers: {
-        addPayment: (state, action) => {
-            state.history.unshift(action.payload);
-            localStorage.setItem('paymentsData', JSON.stringify(state.history));
-        },
-        // No Edit/Delete allowed as per rules
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchPayments.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchPayments.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.history = action.payload;
+            })
+            .addCase(fetchPayments.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload;
+            })
+            .addCase(addPayment.fulfilled, (state, action) => {
+                state.history.unshift(action.payload);
+            });
     },
 });
 
-export const { addPayment } = paymentSlice.actions;
 export default paymentSlice.reducer;

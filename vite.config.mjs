@@ -22,6 +22,7 @@ export default defineConfig({
       "product-details": path.resolve(__dirname, "./src/product-details"),
       collection: path.resolve(__dirname, "./src/collection"),
       homepage: path.resolve(__dirname, "./src/homepage"),
+      store: path.resolve(__dirname, "./src/store"),
     },
   },
   plugins: [tsconfigPaths(), react(), tagger()],

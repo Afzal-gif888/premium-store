@@ -60,7 +60,7 @@
     "start": "vite",
     "build": "vite build --sourcemap",
     "serve": "vite preview",
-    "server": "node server/index.js",
+    "server": "node server/server.js",
     "seed": "node server/seed.js"
   },
   "eslintConfig": {

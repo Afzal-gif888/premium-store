@@ -1,10 +1,23 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleBestseller } from 'store/slices/stockSlice';
+import { fetchProducts, toggleBestseller } from 'store/slices/stockSlice';
+import Image from 'components/AppImage';
 
 const BestsellersPage = () => {
     const dispatch = useDispatch();
-    const products = useSelector(state => state.stock.products);
+    const stockState = useSelector(state => state.stock) || { products: [], status: 'idle' };
+    const products = Array.isArray(stockState.products) ? stockState.products : [];
+    const status = stockState.status || 'idle';
+
+    React.useEffect(() => {
+        if (status === 'idle') {
+            dispatch(fetchProducts());
+        }
+    }, [status, dispatch]);
+
+    if (status === 'loading' && products.length === 0) {
+        return <div className="flex justify-center p-10"><div className="animate-spin h-8 w-8 border-4 border-black border-t-transparent rounded-full"></div></div>;
+    }
 
     return (
         <div className="space-y-6">
@@ -25,14 +38,17 @@ const BestsellersPage = () => {
                             <tr key={product._id || product.id}>
                                 <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3">
                                     {product.image && (
-                                        <img src={product.image} alt="" className="h-10 w-10 rounded object-cover" />
+                                        <Image src={product.image} alt="" className="h-10 w-10 rounded object-cover" />
                                     )}
                                     <span className="font-medium">{product.name}</span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.price}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${Number(product.price || 0).toFixed(2)}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-center">
                                     <button
-                                        onClick={() => dispatch(toggleBestseller({ id: product._id || product.id, isBestseller: !product.isBestseller }))}
+                                        onClick={() => {
+                                            dispatch(toggleBestseller({ id: product._id || product.id, isBestseller: !product.isBestseller }))
+                                                .then(() => dispatch(fetchProducts()));
+                                        }}
                                         className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${product.isBestseller ? 'bg-indigo-600' : 'bg-gray-200'}`}
                                     >
                                         <span className="sr-only">Use setting</span>

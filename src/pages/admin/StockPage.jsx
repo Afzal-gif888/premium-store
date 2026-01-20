@@ -1,17 +1,47 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addProduct, updateProduct, deleteProduct } from 'store/slices/stockSlice';
+import { fetchProducts, addProduct, updateProduct, deleteProduct } from 'store/slices/stockSlice';
 import Button from 'components/ui/Button';
 import Icon from 'components/AppIcon';
+import Image from 'components/AppImage';
 
 const SIZES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 
 const StockPage = () => {
     const dispatch = useDispatch();
-    const products = useSelector(state => state.stock.products);
+    const stockState = useSelector(state => state.stock) || { products: [], status: 'idle' };
+    const products = Array.isArray(stockState.products) ? stockState.products : [];
+    const status = stockState.status || 'idle';
 
     const [isEditing, setIsEditing] = useState(false);
+
+    // Ensure products are loaded
+    React.useEffect(() => {
+        if (status === 'idle') {
+            dispatch(fetchProducts());
+        }
+    }, [status, dispatch]);
+
     const [editId, setEditId] = useState(null);
+
+    if (status === 'loading' && products.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center p-20 min-h-[400px]">
+                <div className="animate-spin h-10 w-10 border-4 border-black border-t-transparent rounded-full mb-4"></div>
+                <p className="text-gray-500 font-medium">Loading stock inventory...</p>
+            </div>
+        );
+    }
+
+    if (status === 'failed') {
+        return (
+            <div className="bg-red-50 p-10 rounded-lg text-center border border-red-100">
+                <h3 className="text-xl font-bold text-red-800">Connection Error</h3>
+                <p className="text-red-600 mt-2">Could not reach the database. Please check if the server is running.</p>
+                <Button onClick={() => window.location.reload()} className="mt-6" variant="danger">Retry Refresh</Button>
+            </div>
+        );
+    }
 
     const initialFormState = {
         name: '',
@@ -31,7 +61,8 @@ const StockPage = () => {
             formData.append('image', file);
 
             try {
-                const res = await fetch('http://localhost:5000/api/upload', {
+                const apiBase = `${window.location.protocol}//${window.location.hostname}:5000`;
+                const res = await fetch(`${apiBase}/api/upload`, {
                     method: 'POST',
                     body: formData
                 });
@@ -90,19 +121,31 @@ const StockPage = () => {
         };
 
         if (editId) {
-            dispatch(updateProduct({ id: editId, data: productData }));
+            dispatch(updateProduct({ id: editId, data: productData })).then(() => {
+                dispatch(fetchProducts());
+            });
         } else {
-            dispatch(addProduct(productData));
+            dispatch(addProduct(productData)).then(() => {
+                dispatch(fetchProducts());
+            });
         }
 
         resetForm();
     };
 
     const handleEdit = (product) => {
-        // Convert backend array format back to object for form
+        // Convert backend data (array or object) back to form object
         const sizesObject = SIZES.reduce((acc, size) => {
-            const sizeEntry = product.sizes?.find(s => s.size === `US ${size}`);
-            return { ...acc, [size]: sizeEntry ? sizeEntry.stock : 0 };
+            const sizeLabel = `US ${size}`;
+            let stockCount = 0;
+
+            if (Array.isArray(product.sizes)) {
+                stockCount = product.sizes.find(s => s.size === sizeLabel)?.stock || 0;
+            } else if (product.sizes && typeof product.sizes === 'object') {
+                stockCount = product.sizes[size] || 0;
+            }
+
+            return { ...acc, [size]: stockCount };
         }, {});
 
         setFormData({
@@ -119,7 +162,9 @@ const StockPage = () => {
 
     const handleDelete = (id) => {
         if (window.confirm("Are you sure? This action cannot be undone.")) {
-            dispatch(deleteProduct(id));
+            dispatch(deleteProduct(id)).then(() => {
+                dispatch(fetchProducts());
+            });
         }
     };
 
@@ -174,7 +219,7 @@ const StockPage = () => {
                             <input type="file" accept="image/*" onChange={handleImageUpload} className="mb-2" />
                             {formData.image && (
                                 <div className="relative w-32 h-32 border rounded overflow-hidden group">
-                                    <img src={formData.image} alt="preview" className="w-full h-full object-cover" />
+                                    <Image src={formData.image} alt="preview" className="w-full h-full object-cover" />
                                     <button
                                         type="button"
                                         onClick={handleRemoveImage}
@@ -236,7 +281,7 @@ const StockPage = () => {
                                 <tr key={product._id}>
                                     <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3">
                                         {product.image && (
-                                            <img src={product.image} alt="" className="h-10 w-10 rounded object-cover" />
+                                            <Image src={product.image} alt="" className="h-10 w-10 rounded object-cover" />
                                         )}
                                         <span className="font-medium">{product.name}</span>
                                         {product.isBestseller && (
@@ -244,7 +289,7 @@ const StockPage = () => {
                                         )}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.category}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.price}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${Number(product.price || 0).toFixed(2)}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{totalStock}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <button onClick={() => handleEdit(product)} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>

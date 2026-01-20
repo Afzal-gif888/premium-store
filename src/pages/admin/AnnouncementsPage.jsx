@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addAnnouncement, deleteAnnouncement } from 'store/slices/announcementSlice';
+import { fetchAnnouncements, addAnnouncement, deleteAnnouncement } from 'store/slices/announcementSlice';
 import Button from 'components/ui/Button';
 
 const AnnouncementsPage = () => {
     const dispatch = useDispatch();
-    const announcements = useSelector(state => state.announcements.items);
+    const announcementState = useSelector(state => state.announcements) || { items: [], status: 'idle' };
+    const announcements = announcementState.items || [];
+    const status = announcementState.status || 'idle';
+
+    React.useEffect(() => {
+        if (status === 'idle') {
+            dispatch(fetchAnnouncements());
+        }
+    }, [status, dispatch]);
 
     // Form State
     const [title, setTitle] = useState('');
@@ -41,7 +49,8 @@ const AnnouncementsPage = () => {
             // We need a way to upload. Since we are inside a component, we can use fetch/axios directly or a thunk.
             // For simplicity, let's use fetch here or assumption that we have an upload util.
             // But we don't have an upload thunk. Let's do a direct fetch for upload.
-            const uploadRes = await fetch('http://localhost:5000/api/upload', {
+            const apiBase = `${window.location.protocol}//${window.location.hostname}:5000`;
+            const uploadRes = await fetch(`${apiBase}/api/upload`, {
                 method: 'POST',
                 body: formData
             });
@@ -57,6 +66,7 @@ const AnnouncementsPage = () => {
             };
 
             await dispatch(addAnnouncement(newAnnouncement)).unwrap();
+            dispatch(fetchAnnouncements());
 
             // Reset
             setTitle('');
@@ -73,7 +83,9 @@ const AnnouncementsPage = () => {
 
     const handleDelete = (id) => {
         if (window.confirm("Delete this announcement?")) {
-            dispatch(deleteAnnouncement(id));
+            dispatch(deleteAnnouncement(id)).then(() => {
+                dispatch(fetchAnnouncements());
+            });
         }
     };
 

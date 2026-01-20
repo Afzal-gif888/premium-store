@@ -1,12 +1,23 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchProducts } from 'store/slices/stockSlice';
 import { useNavigate } from 'react-router-dom';
 import Image from 'components/AppImage';
 import Icon from 'components/AppIcon';
+import Button from 'components/ui/Button';
 
 const Bestsellers = () => {
     const navigate = useNavigate();
-    const products = useSelector(state => state.stock.products);
+    const dispatch = useDispatch();
+    const stockState = useSelector(state => state.stock) || { products: [], status: 'idle' };
+    const products = Array.isArray(stockState.products) ? stockState.products : [];
+    const status = stockState.status || 'idle';
+
+    React.useEffect(() => {
+        if (status === 'idle') {
+            dispatch(fetchProducts());
+        }
+    }, [status, dispatch]);
 
     // Filter by bestseller flag
     const bestsellers = products.filter(p => p.isBestseller);
@@ -14,6 +25,25 @@ const Bestsellers = () => {
     const handleProductClick = (productId) => {
         navigate(`/product/${productId}`);
     };
+
+    if (status === 'loading' && products.length === 0) {
+        return (
+            <section id="bestsellers" className="py-20 bg-gray-50 text-center">
+                <div className="animate-spin inline-block w-8 h-8 border-4 border-black border-t-transparent rounded-full mb-4"></div>
+                <p className="text-gray-500">Loading bestsellers...</p>
+            </section>
+        );
+    }
+
+    if (status === 'failed') {
+        return (
+            <div className="bg-red-50 p-10 rounded-lg text-center border border-red-100">
+                <h3 className="text-xl font-bold text-red-800">Connection Error</h3>
+                <p className="text-red-600 mt-2">Could not reach the database. Please check if the server is running.</p>
+                <Button onClick={() => window.location.reload()} className="mt-6" variant="danger">Retry Refresh</Button>
+            </div>
+        );
+    }
 
     return (
         <section id="bestsellers" className="py-12 md:py-16 lg:py-20 bg-gray-50">
@@ -28,7 +58,7 @@ const Bestsellers = () => {
                 </div>
 
                 {bestsellers.length > 0 ? (
-                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-[12px] gap-y-[12px] md:gap-8 overflow-hidden">
                         {bestsellers.map((product, index) => (
                             <div
                                 key={product._id || product.id}
@@ -48,15 +78,15 @@ const Bestsellers = () => {
                                             <Icon name="Image" size={48} />
                                         </div>
                                     )}
-                                    <div className="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded">
+                                    <div className="absolute top-2 right-2 bg-yellow-400 text-black text-[10px] md:text-xs font-bold px-1.5 py-0.5 md:px-2 md:py-1 rounded">
                                         BESTSELLER
                                     </div>
                                 </div>
-                                <div className="product-card-content">
-                                    <h3 className="product-card-title line-clamp-2 mb-2">{product.name}</h3>
+                                <div className="product-card-content p-3 md:p-4">
+                                    <h3 className="product-card-title text-sm md:text-base line-clamp-2 mb-2">{product.name}</h3>
                                     <div className="flex items-center justify-between">
-                                        <span className="product-card-price">${product.price?.toFixed(2)}</span>
-                                        <span className="text-xs text-blue-600 font-medium">View Details</span>
+                                        <span className="product-card-price text-sm md:text-lg font-bold">${Number(product.price || 0).toFixed(2)}</span>
+                                        <span className="text-[10px] md:text-xs text-blue-600 font-medium">View Details</span>
                                     </div>
                                 </div>
                             </div>

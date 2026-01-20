@@ -9,18 +9,9 @@ function App() {
   const products = useSelector(state => state.stock.products);
 
   useEffect(() => {
-    console.log('App mounted - fetching data...');
-    console.log('Initial products in state:', products.length);
-
-    dispatch(fetchProducts()).then((result) => {
-      console.log('✅ Products fetched:', result.payload?.length || 0, 'products');
-      if (result.payload?.length > 0) {
-        console.log('First product:', result.payload[0]);
-      }
-    });
-    dispatch(fetchAnnouncements()).then((result) => {
-      console.log('✅ Announcements fetched:', result.payload?.length || 0);
-    });
+    // Initial fetch for the entire app state
+    dispatch(fetchProducts());
+    dispatch(fetchAnnouncements());
   }, [dispatch]);
 
   return (

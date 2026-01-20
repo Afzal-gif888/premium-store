@@ -1,34 +1,49 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addPayment } from 'store/slices/paymentSlice';
+import { addPayment, fetchPayments } from 'store/slices/paymentSlice';
+import { fetchProducts } from 'store/slices/stockSlice';
 import Button from 'components/ui/Button';
 
 const PaymentsPage = () => {
     const dispatch = useDispatch();
-    const history = useSelector(state => state.payments.history);
-    const products = useSelector(state => state.stock.products);
+    const paymentState = useSelector(state => state.payments) || { history: [], status: 'idle' };
+    const history = paymentState.history || [];
+    const status = paymentState.status || 'idle';
+
+    const stockState = useSelector(state => state.stock) || { products: [], status: 'idle' };
+    const products = stockState.products || [];
+    const stockStatus = stockState.status || 'idle';
+
+    React.useEffect(() => {
+        if (status === 'idle') {
+            dispatch(fetchPayments());
+        }
+        if (stockStatus === 'idle') {
+            dispatch(fetchProducts());
+        }
+    }, [status, stockStatus, dispatch]);
 
     const [productName, setProductName] = useState('');
     const [size, setSize] = useState('');
     const [amount, setAmount] = useState('');
 
-    // Auto-fill price logic could be added but let's keep it manual as per "Log Payments"
-
     const handleSubmit = (e) => {
         e.preventDefault();
 
         dispatch(addPayment({
-            id: Date.now().toString(),
             productName,
             size,
-            amount: parseFloat(amount),
-            timestamp: new Date().toISOString()
+            amount: parseFloat(amount)
         }));
 
         setProductName('');
         setSize('');
         setAmount('');
     };
+
+    if (status === 'loading' && history.length === 0) {
+        return <div className="flex justify-center p-10"><div className="animate-spin h-8 w-8 border-4 border-black border-t-transparent rounded-full"></div></div>;
+    }
 
     return (
         <div className="space-y-6">
@@ -47,7 +62,7 @@ const PaymentsPage = () => {
                             list="product-list"
                         />
                         <datalist id="product-list">
-                            {products.map(p => <option key={p.id} value={p.name} />)}
+                            {products.map(p => <option key={p._id || p.id} value={p.name} />)}
                         </datalist>
                     </div>
                     <div className="w-full md:w-32">
@@ -89,9 +104,9 @@ const PaymentsPage = () => {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {history.map(item => (
-                            <tr key={item.id}>
+                            <tr key={item._id || item.id}>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {new Date(item.timestamp).toLocaleString()}
+                                    {new Date(item.date || item.timestamp).toLocaleString()}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.productName}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.size}</td>

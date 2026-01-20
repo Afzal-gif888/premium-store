@@ -1,21 +1,46 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchProducts } from 'store/slices/stockSlice';
 import { useNavigate } from 'react-router-dom';
 import Image from 'components/AppImage';
 import Icon from 'components/AppIcon';
+import Button from 'components/ui/Button';
 
 const FeaturedProducts = () => {
   const navigate = useNavigate();
-  const products = useSelector(state => state.stock.products);
+  const dispatch = useDispatch();
+  const stockState = useSelector(state => state.stock) || { products: [], status: 'idle' };
+  const products = Array.isArray(stockState.products) ? stockState.products : [];
+  const status = stockState.status || 'idle';
 
-  console.log('FeaturedProducts rendering, products count:', products.length);
-  if (products.length > 0) {
-    console.log('First product in FeaturedProducts:', products[0]);
-  }
+  React.useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchProducts());
+    }
+  }, [status, dispatch]);
 
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
   };
+
+  if (status === 'loading' && products.length === 0) {
+    return (
+      <section id="collections" className="py-20 bg-background text-center">
+        <div className="animate-spin inline-block w-8 h-8 border-4 border-black border-t-transparent rounded-full mb-4"></div>
+        <p className="text-gray-500">Loading collection...</p>
+      </section>
+    );
+  }
+
+  if (status === 'failed') {
+    return (
+      <div className="bg-red-50 p-10 rounded-lg text-center border border-red-100">
+        <h3 className="text-xl font-bold text-red-800">Connection Error</h3>
+        <p className="text-red-600 mt-2">Could not reach the database. Please check if the server is running.</p>
+        <Button onClick={() => window.location.reload()} className="mt-6" variant="danger">Retry Refresh</Button>
+      </div>
+    );
+  }
 
   return (
     <section id="collections" className="py-12 md:py-16 lg:py-20 bg-background">
@@ -23,7 +48,7 @@ const FeaturedProducts = () => {
 
         <div className="text-center mb-8 md:mb-12 lg:mb-16 scroll-reveal">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 md:mb-6">
-            Our Collection
+            Collections
           </h2>
           <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto">
             Browse our complete inventory, updated in real-time.
@@ -35,7 +60,7 @@ const FeaturedProducts = () => {
             <p className="text-gray-500">No products available at the moment.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-[12px] gap-y-[12px] md:gap-8 overflow-hidden">
             {products.map((product, index) => (
               <div
                 key={product._id || product.id}
@@ -56,30 +81,30 @@ const FeaturedProducts = () => {
                   )}
                 </div>
 
-                <div className="product-card-content">
+                <div className="product-card-content p-3 md:p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <Icon name="Tag" size={16} color="var(--color-muted-foreground)" />
-                    <span className="text-xs md:text-sm text-muted-foreground uppercase tracking-wide">
+                    <Icon name="Tag" size={14} color="var(--color-muted-foreground)" />
+                    <span className="text-[10px] md:text-sm text-muted-foreground uppercase tracking-wide">
                       {product.category}
                     </span>
                   </div>
 
-                  <h3 className="product-card-title line-clamp-2 mb-3">
+                  <h3 className="product-card-title text-sm md:text-base line-clamp-2 mb-3">
                     {product.name}
                   </h3>
 
                   <div className="flex items-center justify-between">
-                    <span className="product-card-price">
-                      ${product.price?.toFixed(2)}
+                    <span className="product-card-price text-sm md:text-lg font-bold">
+                      ${Number(product.price || 0).toFixed(2)}
                     </span>
                     <button
-                      className="flex items-center gap-2 text-sm font-medium text-accent hover:text-accent/80 transition-colors"
+                      className="flex items-center gap-1 text-xs md:text-sm font-medium text-accent hover:text-accent/80 transition-colors"
                       onClick={(e) => {
                         e?.stopPropagation();
                         handleProductClick(product._id || product.id);
                       }}>
                       View
-                      <Icon name="ArrowRight" size={16} />
+                      <Icon name="ArrowRight" size={14} />
                     </button>
                   </div>
                 </div>

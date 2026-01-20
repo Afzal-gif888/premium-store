@@ -10,18 +10,29 @@ function Icon({
     strokeWidth = 2,
     ...props
 }) {
-    const IconComponent = LucideIcons?.[name];
+    // Safety check for LucideIcons object
+    const IconComponent = (LucideIcons && name) ? LucideIcons[name] : null;
 
     if (!IconComponent) {
-        return <HelpCircle size={size} color="gray" strokeWidth={strokeWidth} className={className} {...props} />;
+        // Double safety for HelpCircle
+        const Fallback = HelpCircle;
+        if (Fallback) {
+            return <Fallback size={size} color="gray" strokeWidth={strokeWidth} className={className} {...props} />;
+        }
+        return <span className={className} style={{ width: size, height: size, display: 'inline-block' }}>?</span>;
     }
 
-    return <IconComponent
-        size={size}
-        color={color}
-        strokeWidth={strokeWidth}
-        className={className}
-        {...props}
-    />;
+    try {
+        return <IconComponent
+            size={size}
+            color={color}
+            strokeWidth={strokeWidth}
+            className={className}
+            {...props}
+        />;
+    } catch (e) {
+        console.error("Icon render error:", e);
+        return <span className={className}>!</span>;
+    }
 }
 export default Icon;

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchAnnouncements } from 'store/slices/announcementSlice';
 import { useNavigate } from 'react-router-dom';
 import Image from 'components/AppImage';
 import Button from 'components/ui/Button';
@@ -7,7 +8,14 @@ import bgimg from "./bgimg.jpg";
 
 const HeroSection = () => {
   const navigate = useNavigate();
-  const announcements = useSelector(state => state.announcements.items);
+  const dispatch = useDispatch();
+  const { items: announcements, status } = useSelector(state => state.announcements);
+
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchAnnouncements());
+    }
+  }, [status, dispatch]);
 
   // Use latest announcement or fallback default
   const activeHero = announcements.length > 0 ? announcements[0] : {

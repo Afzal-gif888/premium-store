@@ -5,8 +5,15 @@ import dotenv from 'dotenv';
 import productRoutes from './routes/productRoutes.js';
 import announcementRoutes from './routes/announcementRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
 
-dotenv.config();
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -32,10 +39,18 @@ const connectDB = async () => {
 app.use('/api/products', productRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/payments', paymentRoutes);
 
-// Root Route
-app.get('/', (req, res) => {
-    res.send('Premium Store API is running...');
+// Static files & SPA Fallback
+const buildPath = path.join(__dirname, '../build');
+app.use(express.static(buildPath));
+
+// Redirect all non-API requests to index.html for React Router to handle
+app.use((req, res, next) => {
+    if (req.path.startsWith('/api')) {
+        return next();
+    }
+    res.sendFile(path.join(buildPath, 'index.html'));
 });
 
 // Start Server only after DB connection

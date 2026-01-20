@@ -1,17 +1,51 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchProducts } from 'store/slices/stockSlice';
 import Header from 'components/Header';
 import Icon from 'components/AppIcon';
 
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const products = useSelector(state => state.stock.products);
-  // MongoDB uses _id, frontend might use id. Check both.
-  const product = products.find(p => (p._id === id) || (p.id === id));
+  const dispatch = useDispatch();
 
-  const [selectedSize, setSelectedSize] = useState(null);
+  const stockState = useSelector(state => state.stock) || {};
+  const products = Array.isArray(stockState.products) ? stockState.products : [];
+  const status = stockState.status || 'idle';
+
+  // Fetch products if not already loaded or idle
+  React.useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchProducts());
+    }
+  }, [status, dispatch]);
+
+  // Move find inside useMemo or ensure products is an array
+  const product = Array.isArray(products) ? products.find(p => (p._id === id) || (p.id === id)) : null;
+
+  // Handle Loading State
+  if (status === 'loading' && products.length === 0) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header />
+        <div className="flex flex-col items-center justify-center p-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mb-4"></div>
+          <p className="text-gray-500">Loading product details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === 'failed') {
+    return (
+      <div className="min-h-screen bg-white text-center p-20">
+        <Header />
+        <h2 className="text-2xl font-bold text-red-600">Connection Error</h2>
+        <p className="mt-4">Please check your internet and refresh.</p>
+      </div>
+    );
+  }
 
   // If product not found (or deleted)
   if (!product) {
@@ -20,21 +54,35 @@ const ProductDetails = () => {
         <Header />
         <div className="flex flex-col items-center justify-center p-20">
           <h2 className="text-2xl font-bold mb-4">Product Not Found</h2>
-          <button onClick={() => navigate('/')} className="text-blue-600 underline">Return to Home</button>
+          <p className="text-gray-500 mb-6">The product you are looking for doesn't exist or has been removed.</p>
+          <button onClick={() => navigate('/')} className="bg-black text-white px-6 py-2 rounded-lg font-bold">
+            Return to Home
+          </button>
         </div>
       </div>
     );
   }
 
+  const [selectedSize, setSelectedSize] = useState(null);
+
   // Handle array format from backend: [{ size: "US 7", stock: 10 }]
-  const sizeList = Array.isArray(product.sizes)
-    ? product.sizes.map(s => ({
-      size: s.size,
-      stock: s.stock,
-      available: s.stock > 0,
-      fitNote: s.stock > 0 ? `${s.stock} pairs available` : 'Out of Stock'
-    }))
-    : [];
+  const SIZES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
+
+  const sizeList = SIZES.map(sizeNum => {
+    const sizeLabel = `US ${sizeNum}`;
+    const stockEntry = Array.isArray(product.sizes)
+      ? product.sizes.find(s => s.size === sizeLabel)
+      : null;
+
+    const stockCount = stockEntry ? stockEntry.stock : 0;
+
+    return {
+      size: sizeLabel,
+      stock: stockCount,
+      available: stockCount > 0,
+      fitNote: stockCount > 0 ? `${stockCount} pairs available` : 'Out of Stock'
+    };
+  });
 
   // Single image from backend
   const productImage = product.image || 'https://via.placeholder.com/400';
@@ -70,7 +118,7 @@ const ProductDetails = () => {
               )}
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{product.name}</h1>
-            <p className="text-2xl text-gray-900 font-medium mb-8">${product.price?.toFixed(2)}</p>
+            <p className="text-2xl text-gray-900 font-medium mb-8">${Number(product.price || 0).toFixed(2)}</p>
 
             <div className="mb-8">
               <h3 className="text-sm font-medium text-gray-900 mb-4">Select Size</h3>
