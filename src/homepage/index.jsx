@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import Header from 'components/Header';
 import HeroSection from './components/HeroSection';
 import FeaturedProducts from './components/FeaturedProducts';
@@ -10,6 +11,8 @@ import Footer from './components/Footer';
 
 const Homepage = () => {
   const location = useLocation();
+  const { status: productsStatus } = useSelector(state => state.stock);
+  const { status: announcementsStatus } = useSelector(state => state.announcements);
 
   useEffect(() => {
     if (location.state?.scrollTo) {
@@ -39,13 +42,21 @@ const Homepage = () => {
       });
     }, observerOptions);
 
-    const scrollRevealElements = document.querySelectorAll('.scroll-reveal');
-    scrollRevealElements?.forEach(el => observer?.observe(el));
+    // Function to observe elements
+    const observeElements = () => {
+      const scrollRevealElements = document.querySelectorAll('.scroll-reveal');
+      scrollRevealElements.forEach(el => observer.observe(el));
+    };
+
+    // Initial and delayed check for dynamic content
+    observeElements();
+    const timeoutId = setTimeout(observeElements, 500); // Back-up for animation timing
 
     return () => {
-      scrollRevealElements?.forEach(el => observer?.unobserve(el));
+      clearTimeout(timeoutId);
+      observer.disconnect();
     };
-  }, []);
+  }, [productsStatus, announcementsStatus]);
 
   return (
     <div className="min-h-screen bg-background">

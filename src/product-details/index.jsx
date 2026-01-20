@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts } from 'store/slices/stockSlice';
 import Header from 'components/Header';
 import Icon from 'components/AppIcon';
+import Image from 'components/AppImage';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -101,7 +102,7 @@ const ProductDetails = () => {
           {/* Image Section */}
           <div className="space-y-4">
             <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-              <img
+              <Image
                 src={productImage}
                 alt={product.name}
                 className="w-full h-full object-cover"

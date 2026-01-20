@@ -24,6 +24,16 @@ const StockPage = () => {
 
     const [editId, setEditId] = useState(null);
 
+    const initialFormState = {
+        name: '',
+        category: '',
+        price: '',
+        image: '',
+        sizes: SIZES.reduce((acc, size) => ({ ...acc, [size]: 0 }), {})
+    };
+
+    const [formData, setFormData] = useState(initialFormState);
+
     if (status === 'loading' && products.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center p-20 min-h-[400px]">
@@ -43,16 +53,7 @@ const StockPage = () => {
         );
     }
 
-    const initialFormState = {
-        name: '',
-        category: '',
-        price: '',
-        image: '', // CHANGED: Single image URL instead of array
-        sizes: SIZES.reduce((acc, size) => ({ ...acc, [size]: 0 }), {})
-        // REMOVED: isBestseller - controlled only from Bestseller page
-    };
 
-    const [formData, setFormData] = useState(initialFormState);
 
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];

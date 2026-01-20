@@ -17,7 +17,8 @@ import BestsellersPage from "pages/admin/BestsellersPage";
 import PaymentsPage from "pages/admin/PaymentsPage";
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const authState = useSelector((state) => state.auth) || { isAuthenticated: false };
+  const { isAuthenticated } = authState;
   if (!isAuthenticated) {
     return <Navigate to="/admin" replace />;
   }

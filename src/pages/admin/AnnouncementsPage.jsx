@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchAnnouncements, addAnnouncement, deleteAnnouncement } from 'store/slices/announcementSlice';
 import Button from 'components/ui/Button';
+import Image from 'components/AppImage';
 
 const AnnouncementsPage = () => {
     const dispatch = useDispatch();
@@ -122,7 +123,7 @@ const AnnouncementsPage = () => {
                         <input type="file" accept="image/*" onChange={handleImageUpload} />
                         {preview && (
                             <div className="mt-2 w-full h-48 bg-gray-100 rounded overflow-hidden">
-                                <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+                                <Image src={preview} alt="Preview" className="w-full h-full object-cover" />
                             </div>
                         )}
                     </div>
@@ -137,7 +138,7 @@ const AnnouncementsPage = () => {
                 {announcements.map((item, index) => (
                     <div key={item._id || item.id} className="bg-white p-4 rounded-lg shadow border flex gap-4 items-start relative">
                         <div className="w-24 h-24 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
-                            <img src={item.image} alt="" className="w-full h-full object-cover" />
+                            <Image src={item.image} alt="" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1">
                             <div className="flex items-center gap-2">
