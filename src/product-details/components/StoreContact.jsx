@@ -15,7 +15,7 @@ const StoreContact = () => {
       title: 'Call Us',
       content: '+1 (555) 123-4567',
       action: 'Call Now',
-      link: 'tel:+15551234567'
+      link: 'tel:+1555123456'
     },
     {
       icon: 'Mail',
