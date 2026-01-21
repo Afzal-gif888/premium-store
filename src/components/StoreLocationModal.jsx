@@ -74,8 +74,12 @@ const StoreLocationModal = ({ isOpen, onClose }) => {
                 <div className="p-6 sm:p-8">
                     <div className="flex items-start justify-between mb-6">
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                                <Icon name="Store" size={24} className="text-primary" />
+                            <div className="w-12 h-12 bg-white shadow-sm rounded-full flex items-center justify-center overflow-hidden border border-gray-100">
+                                <img
+                                    src="/assets/images/logo.jpg"
+                                    alt="Premium Store"
+                                    className="w-full h-full object-cover"
+                                />
                             </div>
                             <div>
                                 <h2 className="text-xl font-bold text-gray-900">{STORE_LOCATION.name}</h2>
@@ -103,17 +107,25 @@ const StoreLocationModal = ({ isOpen, onClose }) => {
                     </div>
 
                     <div className="space-y-6">
-                        <div className="flex items-start gap-4">
-                            <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center shrink-0">
-                                <Icon name="MapPin" size={18} className="text-gray-500" />
+                        <a
+                            href={links.directionsUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-start gap-4 p-2 -m-2 rounded-xl hocus:bg-gray-50 transition-colors group"
+                        >
+                            <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                                <Icon name="MapPin" size={18} className="text-gray-500 group-hover:text-primary" />
                             </div>
                             <div>
-                                <p className="text-sm font-medium text-gray-700 leading-relaxed">
+                                <p className="text-sm font-medium text-gray-700 leading-relaxed group-hover:text-primary transition-colors">
                                     {STORE_LOCATION.address}
                                 </p>
                                 {error && <p className="text-[10px] text-orange-600 mt-1">{error}</p>}
+                                <p className="text-[10px] text-primary font-bold mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    TAP TO OPEN IN MAPS
+                                </p>
                             </div>
-                        </div>
+                        </a>
 
                         <div className="flex items-start gap-4">
                             <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center shrink-0">

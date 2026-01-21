@@ -68,8 +68,12 @@ const Footer = () => {
 
           <div className="space-y-4 md:space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Icon name="Store" size={24} color="var(--color-primary)" />
+              <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center overflow-hidden border border-gray-100">
+                <img
+                  src="https://res.cloudinary.com/dh8ixjcnu/image/upload/v1737489597/premium_store_branding/store_logo.jpg"
+                  alt="Premium Store"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <span className="text-xl font-semibold text-primary">Premium Store</span>
             </div>

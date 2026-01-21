@@ -29,10 +29,14 @@ const Header = () => {
       <header className="header sticky top-0 z-50 bg-white shadow-sm">
         <div className="header-container max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/" className="header-logo flex items-center gap-2">
-            <div className="header-logo-icon">
-              <Icon name="Store" size={24} color="var(--color-primary)" />
+            <div className="flex items-center justify-center w-12 h-12 overflow-hidden rounded-full border border-gray-100 shadow-sm bg-white shrink-0">
+              <img
+                src="https://res.cloudinary.com/dh8ixjcnu/image/upload/v1737489597/premium_store_branding/store_logo.jpg"
+                alt="Premium Store Logo"
+                className="w-full h-full object-cover"
+              />
             </div>
-            <span className="header-logo-text font-bold text-xl">Premium Store</span>
+            <span className="header-logo-text font-bold text-xl text-primary">Premium Store</span>
           </Link>
 
           {/* Desktop Nav */}
