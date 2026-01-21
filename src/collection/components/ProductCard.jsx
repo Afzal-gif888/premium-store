@@ -9,9 +9,20 @@ const ProductCard = ({ product }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
+  // Normalize data between backend (single image) and mock (multiple images)
+  const productId = product._id || product.id;
+
+  // Backend uses 'image', Mock uses 'images' array
+  const hasImagesArray = Array.isArray(product?.images) && product.images.length > 0;
+  const mainImage = hasImagesArray ? product.images[currentImageIndex]?.url : product.image;
+  const imageAlt = hasImagesArray ? product.images[currentImageIndex]?.alt : product.name;
+  const imageCount = hasImagesArray ? product.images.length : 1;
+
   const getAvailabilityBadge = () => {
-    const totalStock = product?.sizes?.reduce((sum, size) => sum + size?.stock, 0);
-    
+    const totalStock = Array.isArray(product?.sizes)
+      ? product.sizes.reduce((sum, size) => sum + size.stock, 0)
+      : 0;
+
     if (totalStock === 0) {
       return {
         text: 'Out of Stock',
@@ -31,20 +42,22 @@ const ProductCard = ({ product }) => {
   };
 
   const handleCardClick = () => {
-    navigate('/product-details', { state: { product } });
+    navigate(`/product/${productId}`);
   };
 
   const handleNextImage = (e) => {
     e?.stopPropagation();
-    setCurrentImageIndex((prev) => 
-      prev === product?.images?.length - 1 ? 0 : prev + 1
+    if (!hasImagesArray) return;
+    setCurrentImageIndex((prev) =>
+      prev === product.images.length - 1 ? 0 : prev + 1
     );
   };
 
   const handlePrevImage = (e) => {
     e?.stopPropagation();
-    setCurrentImageIndex((prev) => 
-      prev === 0 ? product?.images?.length - 1 : prev - 1
+    if (!hasImagesArray) return;
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? product.images.length - 1 : prev - 1
     );
   };
 
@@ -52,88 +65,86 @@ const ProductCard = ({ product }) => {
 
   return (
     <div
-      className="product-card cursor-pointer"
+      className="product-card cursor-pointer group"
       onClick={handleCardClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative w-full aspect-square overflow-hidden bg-muted">
+      <div className="relative w-full aspect-square overflow-hidden bg-muted rounded-t-lg">
         <Image
-          src={product?.images?.[currentImageIndex]?.url}
-          alt={product?.images?.[currentImageIndex]?.alt}
-          className="product-card-image"
+          src={mainImage}
+          alt={imageAlt}
+          className="product-card-image transition-transform duration-500 group-hover:scale-110"
         />
-        
-        <div className={badge?.className}>
-          {badge?.text}
+
+        <div className={badge.className}>
+          {badge.text}
         </div>
 
-        {product?.images?.length > 1 && isHovered && (
+        {product.isBestseller && (
+          <div className="absolute top-4 left-4 bg-yellow-400 text-black text-[10px] md:text-xs font-black px-2 py-1 rounded shadow-sm z-10">
+            BESTSELLER
+          </div>
+        )}
+
+        {hasImagesArray && imageCount > 1 && isHovered && (
           <>
             <button
               onClick={handlePrevImage}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full bg-card/90 backdrop-blur-sm shadow-lg hover:bg-card transition-all duration-200"
-              aria-label="Previous image"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-white transition-all z-20"
             >
-              <Icon name="ChevronLeft" size={20} color="var(--color-foreground)" />
+              <Icon name="ChevronLeft" size={16} />
             </button>
             <button
               onClick={handleNextImage}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full bg-card/90 backdrop-blur-sm shadow-lg hover:bg-card transition-all duration-200"
-              aria-label="Next image"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-white transition-all z-20"
             >
-              <Icon name="ChevronRight" size={20} color="var(--color-foreground)" />
+              <Icon name="ChevronRight" size={16} />
             </button>
           </>
         )}
 
-        {product?.images?.length > 1 && (
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {product?.images?.map((_, index) => (
+        {hasImagesArray && imageCount > 1 && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 z-10">
+            {product.images.map((_, index) => (
               <div
                 key={index}
-                className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${
-                  index === currentImageIndex
-                    ? 'bg-primary w-4' :'bg-muted-foreground/40'
-                }`}
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${index === currentImageIndex ? 'bg-primary px-2' : 'bg-white/50'
+                  }`}
               />
             ))}
           </div>
         )}
       </div>
-      <div className="product-card-content space-y-2">
-        <h3 className="product-card-title line-clamp-2">
-          {product?.name}
-        </h3>
-        
-        <p className="text-xs md:text-sm text-muted-foreground line-clamp-1" style={{ fontFamily: 'var(--font-body)' }}>
-          {product?.category}
-        </p>
 
-        <div className="flex items-center justify-between">
-          <p className="product-card-price">
-            ${product?.price?.toFixed(2)}
-          </p>
-          
-          <div className="flex items-center gap-1 text-xs md:text-sm text-muted-foreground">
-            <Icon name="Package" size={14} color="var(--color-muted-foreground)" />
-            <span style={{ fontFamily: 'var(--font-body)' }}>
-              {product?.sizes?.filter(s => s?.stock > 0)?.length} sizes
-            </span>
-          </div>
+      <div className="product-card-content p-4 space-y-3">
+        <div className="flex items-center gap-2">
+          <Icon name="Tag" size={12} className="text-muted-foreground" />
+          <span className="text-[10px] md:text-xs text-muted-foreground uppercase font-bold tracking-widest">
+            {product.category || 'Collection'}
+          </span>
         </div>
 
-        <Button
-          variant="outline"
-          size="sm"
-          fullWidth
-          iconName="Eye"
-          iconPosition="left"
-          iconSize={16}
-          onClick={handleCardClick}
-        >
-          View Details
-        </Button>
+        <h3 className="product-card-title text-sm md:text-base font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+          {product.name}
+        </h3>
+
+        <div className="flex items-center justify-between pt-1">
+          <p className="product-card-price text-lg font-black text-primary">
+            ${Number(product.price || 0).toFixed(2)}
+          </p>
+
+          <button
+            className="flex items-center gap-1.5 text-xs font-bold text-accent hover:gap-2 transition-all"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCardClick();
+            }}
+          >
+            <span>VIEW</span>
+            <Icon name="ArrowRight" size={14} />
+          </button>
+        </div>
       </div>
     </div>
   );

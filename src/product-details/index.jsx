@@ -89,6 +89,11 @@ const ProductDetails = () => {
   const productImage = product.image || 'https://via.placeholder.com/400';
   const productPrice = Number(product.price || 0);
 
+  const handleRelatedClick = (relatedId) => {
+    navigate(`/product/${relatedId}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -159,8 +164,9 @@ const ProductDetails = () => {
                     We are an offline retail showcase. Please visit our physical location to purchase this item.
                   </p>
                   <div className="mt-4 text-sm text-gray-600">
-                    <p>123 Fashion Avenue</p>
-                    <p>New York, NY 10001</p>
+                    <p>Beside Bharath Theatre Street,</p>
+                    <p>Upstairs Of RI Fashion</p>
+                    <p>Mydukur</p>
                     <p>Mon-Sat: 10am - 9pm</p>
                   </div>
                 </div>
@@ -174,6 +180,74 @@ const ProductDetails = () => {
             >
               {selectedSize ? 'Available at Store' : 'Select a Size'}
             </button>
+          </div>
+        </div>
+
+        {/* --- Related Products Section --- */}
+        <div className="mt-20 pt-12 border-t border-gray-100">
+          <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Related Products</h2>
+            <div className="h-px flex-grow bg-gray-100 mx-8 hidden md:block"></div>
+            <span className="text-sm text-gray-500 font-medium">From {product.category || 'this category'}</span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-[12px] gap-y-[12px] md:gap-8">
+            {products
+              .filter(p => p.category === product.category && (p._id !== id && p.id !== id))
+              .slice(0, 4)
+              .map((relatedProduct) => (
+                <div
+                  key={relatedProduct._id || relatedProduct.id}
+                  className="product-card cursor-pointer"
+                  onClick={() => handleRelatedClick(relatedProduct._id || relatedProduct.id)}
+                >
+                  <div className="relative overflow-hidden aspect-square bg-gray-100">
+                    <Image
+                      src={relatedProduct.image}
+                      alt={relatedProduct.name}
+                      className="product-card-image hover:scale-110 transition-transform duration-500"
+                    />
+                    {relatedProduct.isBestseller && (
+                      <div className="absolute top-2 right-2 bg-yellow-400 text-black text-[10px] md:text-xs font-bold px-1.5 py-0.5 md:px-2 md:py-1 rounded shadow-sm">
+                        BESTSELLER
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="product-card-content p-3 md:p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Icon name="Tag" size={14} color="var(--color-muted-foreground)" />
+                      <span className="text-[10px] md:text-sm text-muted-foreground uppercase tracking-wide">
+                        {relatedProduct.category}
+                      </span>
+                    </div>
+
+                    <h3 className="product-card-title text-sm md:text-base line-clamp-2 mb-3">
+                      {relatedProduct.name}
+                    </h3>
+
+                    <div className="flex items-center justify-between">
+                      <span className="product-card-price text-sm md:text-lg font-bold">
+                        ${Number(relatedProduct.price || 0).toFixed(2)}
+                      </span>
+                      <button
+                        className="flex items-center gap-1 text-xs md:text-sm font-medium text-accent hover:text-accent/80 transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRelatedClick(relatedProduct._id || relatedProduct.id);
+                        }}>
+                        View
+                        <Icon name="ArrowRight" size={14} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            {products.filter(p => p.category === product.category && (p._id !== id && p.id !== id)).length === 0 && (
+              <div className="col-span-full py-12 text-center bg-gray-50 rounded-xl">
+                <p className="text-gray-500">No other products found in this category.</p>
+              </div>
+            )}
           </div>
         </div>
       </main>

@@ -32,9 +32,15 @@ app.use((req, res, next) => {
 
 // Ensure uploads directory exists
 const uploadsPath = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsPath)) {
-    fs.mkdirSync(uploadsPath, { recursive: true });
-    console.log('Created uploads directory');
+try {
+    if (!fs.existsSync(uploadsPath)) {
+        fs.mkdirSync(uploadsPath, { recursive: true });
+        console.log('[INIT] Created uploads directory');
+    } else {
+        console.log('[INIT] Uploads directory verified');
+    }
+} catch (err) {
+    console.error('[CRITICAL] Failed to initialize uploads directory:', err);
 }
 
 // Serve static uploads
@@ -43,10 +49,11 @@ app.use('/uploads', express.static(uploadsPath));
 // Database Connection
 const connectDB = async () => {
     try {
+        console.log('[DB] Attempting connection...');
         const conn = await mongoose.connect(process.env.MONGO_URI);
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
+        console.log(`[DB] Connected: ${conn.connection.host}`);
     } catch (error) {
-        console.error(`Error: ${error.message}`);
+        console.error(`[DB] CRITICAL ERROR: ${error.message}`);
         process.exit(1);
     }
 };

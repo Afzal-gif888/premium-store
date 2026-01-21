@@ -5,6 +5,7 @@ import streamifier from 'streamifier';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import sharp from 'sharp';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,7 +28,6 @@ const upload = multer({
         }
     }
 });
-
 router.post('/', (req, res, next) => {
     console.log('--- Multer Middleware Start ---');
     upload.single('image')(req, res, (err) => {
@@ -48,12 +48,44 @@ router.post('/', (req, res, next) => {
             console.log('Upload Error: No file in request after multer');
             return res.status(400).json({ success: false, message: 'No file uploaded' });
         }
-        console.log('File received:', req.file.originalname, 'Size:', req.file.size);
+
+        console.log('--- req.file object dump ---');
+        console.log(JSON.stringify({
+            fieldname: req.file.fieldname,
+            originalname: req.file.originalname,
+            encoding: req.file.encoding,
+            mimetype: req.file.mimetype,
+            size: req.file.size,
+            hasBuffer: !!req.file.buffer,
+            bufferLength: req.file.buffer ? req.file.buffer.length : 0
+        }, null, 2));
+
+        if (!req.file.buffer || req.file.buffer.length === 0) {
+            console.error('CRITICAL: Received empty buffer from Multer');
+            return res.status(500).json({ success: false, message: 'Received empty file buffer' });
+        }
+
+        // --- IMAGE OPTIMIZATION ---
+        // Resize to max 1200x1200px and convert to optimized WebP
+        console.log('Optimizing image with sharp...');
+        const optimizedBuffer = await sharp(req.file.buffer)
+            .resize(1200, 1200, {
+                fit: 'inside',
+                withoutEnlargement: true
+            })
+            .webp({ quality: 80 })
+            .toBuffer();
+
+        console.log('Optimization Done. New Size:', optimizedBuffer.length);
+
+        // Sanitize filename for local storage
+        const sanitizedOriginalName = req.file.originalname.replace(/[^a-z0-9.]/gi, '_').toLowerCase();
+        const filename = `${Date.now()}-${sanitizedOriginalName}.webp`;
 
         // Stage 1: Attempt Cloudinary with Timeout
         try {
             console.log('Attempting Cloudinary Upload...');
-            const streamUpload = (req) => {
+            const streamUpload = (buffer) => {
                 return new Promise((resolve, reject) => {
                     const timeoutId = setTimeout(() => {
                         reject(new Error('Cloudinary Upload Timeout (10s)'));
@@ -82,11 +114,11 @@ router.post('/', (req, res, next) => {
                         reject(err);
                     });
 
-                    streamifier.createReadStream(req.file.buffer).pipe(stream);
+                    streamifier.createReadStream(buffer).pipe(stream);
                 });
             };
 
-            const result = await streamUpload(req);
+            const result = await streamUpload(optimizedBuffer);
             console.log('Cloudinary Success!');
             return res.status(200).json({
                 success: true,
@@ -99,11 +131,10 @@ router.post('/', (req, res, next) => {
             console.error('Cloudinary Failed, Switching to Local Fallback:', cloudinaryError.message);
 
             // Stage 2: Local Storage Fallback
-            const filename = `${Date.now()}-${req.file.originalname.replace(/\s+/g, '_')}`;
             const filePath = path.join(uploadsDir, filename);
 
-            console.log('Writing file locally to:', filePath);
-            await fs.writeFile(filePath, req.file.buffer);
+            console.log('Writing optimized file locally to:', filePath);
+            await fs.writeFile(filePath, optimizedBuffer);
 
             const apiBase = `${req.protocol}://${req.get('host')}`;
             const localUrl = `${apiBase}/uploads/${filename}`;

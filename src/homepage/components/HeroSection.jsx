@@ -11,13 +11,12 @@ const HeroSection = () => {
     title: "Premium Footwear, Guaranteed Availability",
     subtitle: "Know before you go. Discover our collection with real-time stock updates.",
     ctaPrimary: "Browse Collection",
-    ctaSecondary: "View Announcements",
     heroImage: bgimg,
     heroImageAlt: "Elegant display of premium leather shoes arranged on modern minimalist shelving with soft natural lighting highlighting craftsmanship and quality materials in sophisticated retail environment"
   };
 
   return (
-    <section className="relative min-h-[600px] md:min-h-[700px] lg:min-h-[800px] flex items-center overflow-hidden bg-card">
+    <section id="announcements" className="relative min-h-[600px] md:min-h-[700px] lg:min-h-[800px] flex items-center overflow-hidden bg-card">
       <div className="gradient-mesh"></div>
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
@@ -35,19 +34,13 @@ const HeroSection = () => {
               <Button
                 variant="default"
                 size="lg"
-                onClick={() => navigate('/collection')}
+                onClick={() => {
+                  const el = document.getElementById('collections');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
                 className="cta-button cta-button-primary">
 
                 {heroData?.ctaPrimary}
-              </Button>
-
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => navigate('/announcements')}
-                className="cta-button cta-button-secondary">
-
-                {heroData?.ctaSecondary}
               </Button>
             </div>
           </div>
@@ -65,7 +58,8 @@ const HeroSection = () => {
 
         </div>
       </div>
-    </section>);
+    </section>
+  );
 
 };
 
