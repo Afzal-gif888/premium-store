@@ -193,7 +193,7 @@ const ProductDetails = () => {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-[12px] gap-y-[12px] md:gap-8">
             {products
-              .filter(p => p.category === product.category && (p._id !== id && p.id !== id))
+              .filter(p => p.category === product.category && (p._id || p.id) !== id)
               .slice(0, 4)
               .map((relatedProduct) => (
                 <div
@@ -243,7 +243,7 @@ const ProductDetails = () => {
                   </div>
                 </div>
               ))}
-            {products.filter(p => p.category === product.category && (p._id !== id && p.id !== id)).length === 0 && (
+            {products.filter(p => p.category === product.category && (p._id || p.id) !== id).length === 0 && (
               <div className="col-span-full py-12 text-center bg-gray-50 rounded-xl">
                 <p className="text-gray-500">No other products found in this category.</p>
               </div>

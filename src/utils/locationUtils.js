@@ -81,10 +81,13 @@ export const getStoreLinks = () => {
     // Call
     const callUrl = `tel:${phone}`;
 
+    // WhatsApp (using wa.me format with country code)
+    const phoneClean = phone.replace(/[^0-9]/g, ''); // Remove non-numeric chars
+    const whatsappUrl = `https://wa.me/${phoneClean}`;
+
     // Reviews (Place Content)
-    // Logic from prompt: Open Google Reviews using place_id deep link.
     const reviewsUrl = `https://search.google.com/local/writereview?placeid=${googlePlaceId}`;
 
-    return { directionsUrl, callUrl, reviewsUrl };
+    return { directionsUrl, callUrl, whatsappUrl, reviewsUrl };
 };
 

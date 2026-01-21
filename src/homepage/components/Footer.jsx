@@ -2,10 +2,13 @@ import React from 'react';
 import Icon from 'components/AppIcon';
 import { useNavigate, useLocation } from 'react-router-dom';
 
+import { getStoreLinks } from '../../utils/locationUtils';
+
 const Footer = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const currentYear = new Date()?.getFullYear();
+  const storeLinks = getStoreLinks();
 
   const handleNavigation = (path) => {
     // If path is absolute/external or strict route (not part of single page scroll sections)
@@ -58,6 +61,7 @@ const Footer = () => {
 
   const socialLinks = [
     { icon: "Instagram", label: "Instagram", url: "https://www.instagram.com/premiumstore_2026?igsh=MXAzdTUwcHl0MnI1aQ==" },
+    { icon: "MessageCircle", label: "WhatsApp", url: storeLinks.whatsappUrl },
   ];
 
   return (

@@ -111,20 +111,14 @@ const StoreLocationModal = ({ isOpen, onClose }) => {
                             href={links.directionsUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-start gap-4 p-2 -m-2 rounded-xl hocus:bg-gray-50 transition-colors group"
+                            className="flex items-start gap-4 p-2 -m-2 rounded-xl hover:bg-gray-50 transition-colors group"
                         >
                             <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
                                 <Icon name="MapPin" size={18} className="text-gray-500 group-hover:text-primary" />
                             </div>
-                            <div>
-                                <p className="text-sm font-medium text-gray-700 leading-relaxed group-hover:text-primary transition-colors">
-                                    {STORE_LOCATION.address}
-                                </p>
-                                {error && <p className="text-[10px] text-orange-600 mt-1">{error}</p>}
-                                <p className="text-[10px] text-primary font-bold mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    TAP TO OPEN IN MAPS
-                                </p>
-                            </div>
+                            <p className="text-sm font-medium text-gray-700 leading-relaxed group-hover:text-primary transition-colors">
+                                {STORE_LOCATION.address}
+                            </p>
                         </a>
 
                         <div className="flex items-start gap-4">

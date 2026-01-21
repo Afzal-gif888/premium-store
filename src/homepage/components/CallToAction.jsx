@@ -3,10 +3,12 @@ import Icon from 'components/AppIcon';
 import Button from 'components/ui/Button';
 import { useNavigate } from 'react-router-dom';
 import StoreLocationModal from 'components/StoreLocationModal';
+import { getStoreLinks } from '../../utils/locationUtils';
 
 const CallToAction = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const storeLinks = getStoreLinks();
 
   return (
     <section id="contact" className="py-12 md:py-16 lg:py-20 bg-primary text-primary-foreground relative overflow-hidden">
@@ -52,11 +54,16 @@ const CallToAction = () => {
           </div>
 
           <div className="mt-12 md:mt-16 lg:mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-primary-foreground/10 pt-12">
-            <div className="flex flex-col items-center gap-3">
+            <a
+              href={storeLinks.directionsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer"
+            >
               <Icon name="MapPin" size={32} color="var(--color-accent)" />
               <h3 className="text-lg md:text-xl font-semibold">Location</h3>
               <p className="text-sm md:text-base opacity-80 max-w-[200px] text-center">Beside Bharath Theatre Street, Upstairs Of RI Fashion Mydukur</p>
-            </div>
+            </a>
 
             <div className="flex flex-col items-center gap-3">
               <Icon name="Clock" size={32} color="var(--color-accent)" />
@@ -64,11 +71,14 @@ const CallToAction = () => {
               <p className="text-sm md:text-base opacity-80">Mon-Sat: 10AM-8PM<br />Sun: 10AM-6PM</p>
             </div>
 
-            <div className="flex flex-col items-center gap-3">
+            <a
+              href={storeLinks.callUrl}
+              className="flex flex-col items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer"
+            >
               <Icon name="Phone" size={32} color="var(--color-accent)" />
               <h3 className="text-lg md:text-xl font-semibold">Help Line</h3>
               <p className="text-sm md:text-base opacity-80">+91 9701645812</p>
-            </div>
+            </a>
           </div>
 
         </div>
