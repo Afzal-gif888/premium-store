@@ -1,83 +1,72 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchAnnouncements } from 'store/slices/announcementSlice';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import Image from 'components/AppImage';
 import Button from 'components/ui/Button';
-import bgimg from "./bgimg.jpg";
+import { useNavigate } from 'react-router-dom';
+import bgimg from './bgimg.jpg';
 
 const HeroSection = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { items: announcements, status } = useSelector(state => state.announcements);
 
-  useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchAnnouncements());
-    }
-  }, [status, dispatch]);
-
-  // Use latest announcement or fallback default
-  const activeHero = announcements.length > 0 ? announcements[0] : {
+  const heroData = {
     title: "Premium Footwear, Guaranteed Availability",
     subtitle: "Know before you go. Discover our collection with real-time stock updates.",
-    image: bgimg,
     ctaPrimary: "Browse Collection",
     ctaSecondary: "View Announcements",
-    heroImageAlt: "Premium Store Showcase"
-  };
-
-  const scrollToCollections = () => {
-    document.getElementById('collections')?.scrollIntoView({ behavior: 'smooth' });
+    heroImage: bgimg,
+    heroImageAlt: "Elegant display of premium leather shoes arranged on modern minimalist shelving with soft natural lighting highlighting craftsmanship and quality materials in sophisticated retail environment"
   };
 
   return (
-    <section id="announcements" className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex items-center overflow-hidden bg-card">
+    <section className="relative min-h-[600px] md:min-h-[700px] lg:min-h-[800px] flex items-center overflow-hidden bg-card">
       <div className="gradient-mesh"></div>
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 lg:py-16">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16 lg:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
 
-          <div className="scroll-reveal space-y-4 md:space-y-6 lg:space-y-8 text-center lg:text-left">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-              {activeHero.title}
+          <div className="scroll-reveal space-y-6 md:space-y-8 lg:space-y-10 text-center lg:text-left">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+              {heroData?.title}
             </h1>
 
             <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0">
-              {activeHero.subtitle || activeHero.description}
+              {heroData?.subtitle}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center lg:justify-start">
               <Button
                 variant="default"
                 size="lg"
-                onClick={scrollToCollections}
+                onClick={() => navigate('/collection')}
                 className="cta-button cta-button-primary">
-                Browse Collection
+
+                {heroData?.ctaPrimary}
+              </Button>
+
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => navigate('/announcements')}
+                className="cta-button cta-button-secondary">
+
+                {heroData?.ctaSecondary}
               </Button>
             </div>
           </div>
 
           <div className="scroll-reveal relative">
-            <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-[16/9] lg:aspect-[4/3]">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] lg:aspect-[3/4]">
               <Image
-                src={activeHero.image || activeHero.heroImage} // Support both keys
-                alt={activeHero.heroImageAlt || activeHero.title}
+                src={heroData?.heroImage}
+                alt={heroData?.heroImageAlt}
                 className="w-full h-full object-cover" />
 
-              {/* Text Transparent Overlay Effect */}
-              <div className="absolute inset-0 bg-black/30 flex items-center justify-center pointer-events-none">
-                {/* Optional: If user wanted text ON the image, we'd put it here.
-                     But looking at the request 'text should be transparent on the image', likely refers to a watermark or overlay style.
-                     Since the main text is side-by-side in this layout, I'm adding a subtle overlay to the image itself to make it look 'premium'.
-                  */}
-              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent"></div>
             </div>
           </div>
 
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 };
 
 export default HeroSection;
