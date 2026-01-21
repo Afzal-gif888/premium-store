@@ -14,6 +14,7 @@ const ProductDetails = () => {
   const stockState = useSelector(state => state.stock) || {};
   const products = Array.isArray(stockState.products) ? stockState.products : [];
   const status = stockState.status || 'idle';
+  const [selectedSize, setSelectedSize] = useState(null);
 
   // Fetch products if not already loaded or idle
   React.useEffect(() => {
@@ -49,7 +50,7 @@ const ProductDetails = () => {
   }
 
   // If product not found (or deleted)
-  if (!product) {
+  if (!product || Object.keys(product).length === 0) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
@@ -64,7 +65,6 @@ const ProductDetails = () => {
     );
   }
 
-  const [selectedSize, setSelectedSize] = useState(null);
 
   // Handle array format from backend: [{ size: "US 7", stock: 10 }]
   const SIZES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
@@ -87,6 +87,7 @@ const ProductDetails = () => {
 
   // Single image from backend
   const productImage = product.image || 'https://via.placeholder.com/400';
+  const productPrice = Number(product.price || 0);
 
   return (
     <div className="min-h-screen bg-white">
@@ -104,7 +105,7 @@ const ProductDetails = () => {
             <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
               <Image
                 src={productImage}
-                alt={product.name}
+                alt={product.name || 'Product Image'}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -113,13 +114,13 @@ const ProductDetails = () => {
           {/* Details Section */}
           <div>
             <div className="mb-2">
-              <span className="text-sm text-gray-500 uppercase tracking-widest">{product.category}</span>
+              <span className="text-sm text-gray-500 uppercase tracking-widest">{product.category || 'Uncategorized'}</span>
               {product.isBestseller && (
                 <span className="ml-2 bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded font-bold">BESTSELLER</span>
               )}
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{product.name}</h1>
-            <p className="text-2xl text-gray-900 font-medium mb-8">${Number(product.price || 0).toFixed(2)}</p>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{product.name || 'Unnamed Product'}</h1>
+            <p className="text-2xl text-gray-900 font-medium mb-8">${productPrice.toFixed(2)}</p>
 
             <div className="mb-8">
               <h3 className="text-sm font-medium text-gray-900 mb-4">Select Size</h3>

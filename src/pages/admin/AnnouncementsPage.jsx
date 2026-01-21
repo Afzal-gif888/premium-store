@@ -35,6 +35,8 @@ const AnnouncementsPage = () => {
         }
     };
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!title || !imageFile) {
@@ -42,22 +44,23 @@ const AnnouncementsPage = () => {
             return;
         }
 
+        setIsSubmitting(true);
         try {
             // 1. Upload Image
             const formData = new FormData();
             formData.append('image', imageFile);
 
-            // We need a way to upload. Since we are inside a component, we can use fetch/axios directly or a thunk.
-            // For simplicity, let's use fetch here or assumption that we have an upload util.
-            // But we don't have an upload thunk. Let's do a direct fetch for upload.
             const apiBase = `${window.location.protocol}//${window.location.hostname}:5000`;
             const uploadRes = await fetch(`${apiBase}/api/upload`, {
                 method: 'POST',
                 body: formData
             });
+
             const uploadData = await uploadRes.json();
 
-            if (!uploadRes.ok) throw new Error(uploadData.message || 'Upload failed');
+            if (!uploadRes.ok) {
+                throw new Error(uploadData.message || 'Image upload failed to Cloudinary');
+            }
 
             // 2. Create Announcement
             const newAnnouncement = {
@@ -74,11 +77,13 @@ const AnnouncementsPage = () => {
             setDescription('');
             setImageFile(null);
             setPreview(null);
-            alert('Announcement Published!');
+            alert('Announcement Published Successfully!');
 
         } catch (error) {
-            console.error(error);
+            console.error('Announcements Error:', error);
             alert('Failed to publish: ' + error.message);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -128,7 +133,14 @@ const AnnouncementsPage = () => {
                         )}
                     </div>
                     <div className="flex justify-end">
-                        <Button type="submit">Publish Announcement</Button>
+                        <Button type="submit" disabled={isSubmitting}>
+                            {isSubmitting ? (
+                                <div className="flex items-center gap-2">
+                                    <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                                    Publishing...
+                                </div>
+                            ) : 'Publish Announcement'}
+                        </Button>
                     </div>
                 </form>
             </div>

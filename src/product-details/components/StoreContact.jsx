@@ -6,7 +6,7 @@ const StoreContact = () => {
     {
       icon: 'MapPin',
       title: 'Visit Our Store',
-      content: '123 Premium Street, Fashion District, New York, NY 10001',
+      content: 'BESIDE BHARATH THEATRE STREET UPSTAIRS RI FASHION,MYDUKUR',
       action: 'Get Directions',
       link: '#'
     },

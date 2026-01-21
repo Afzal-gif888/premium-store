@@ -57,10 +57,7 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { icon: "Facebook", label: "Facebook", url: "#" },
-    { icon: "Instagram", label: "Instagram", url: "#" },
-    { icon: "Twitter", label: "Twitter", url: "#" },
-    { icon: "Youtube", label: "YouTube", url: "#" }
+    { icon: "Instagram", label: "Instagram", url: "https://www.instagram.com/premiumstore_2026?igsh=MXAzdTUwcHl0MnI1aQ==" },
   ];
 
   return (

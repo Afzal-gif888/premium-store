@@ -22,7 +22,8 @@ console.log('-------------------------------');
 cloudinary.config({
     cloud_name: cloudName,
     api_key: apiKey,
-    api_secret: apiSecret
+    api_secret: apiSecret,
+    timeout: 10000 // 10 seconds
 });
 
 export default cloudinary;

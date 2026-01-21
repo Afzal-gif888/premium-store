@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import fs from 'fs';
 import productRoutes from './routes/productRoutes.js';
 import announcementRoutes from './routes/announcementRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
@@ -20,9 +21,24 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
-// Increase limit for potential base64 (though we use multipart) - good practice
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Request tracing
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+});
+
+// Ensure uploads directory exists
+const uploadsPath = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsPath)) {
+    fs.mkdirSync(uploadsPath, { recursive: true });
+    console.log('Created uploads directory');
+}
+
+// Serve static uploads
+app.use('/uploads', express.static(uploadsPath));
 
 // Database Connection
 const connectDB = async () => {
@@ -53,9 +69,21 @@ app.use((req, res, next) => {
     res.sendFile(path.join(buildPath, 'index.html'));
 });
 
+// Global Error Handler
+app.use((err, req, res, next) => {
+    console.error('Unhandled Error:', err);
+    res.status(500).json({
+        success: false,
+        message: err.message || 'Internal Server Error'
+    });
+});
+
 // Start Server only after DB connection
 connectDB().then(() => {
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
     });
+
+    // Increase server timeout for long uploads
+    server.timeout = 300000; // 5 minutes
 });

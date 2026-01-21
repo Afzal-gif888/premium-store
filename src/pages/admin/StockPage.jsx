@@ -13,7 +13,9 @@ const StockPage = () => {
     const products = Array.isArray(stockState.products) ? stockState.products : [];
     const status = stockState.status || 'idle';
 
+    const [editId, setEditId] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
 
     // Ensure products are loaded
     React.useEffect(() => {
@@ -21,8 +23,6 @@ const StockPage = () => {
             dispatch(fetchProducts());
         }
     }, [status, dispatch]);
-
-    const [editId, setEditId] = useState(null);
 
     const initialFormState = {
         name: '',
@@ -55,9 +55,17 @@ const StockPage = () => {
 
 
 
+
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (file) {
+            // Check file size (client-side validation)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size too large. Max 5MB allowed.');
+                return;
+            }
+
+            setIsUploading(true);
             const formData = new FormData();
             formData.append('image', file);
 
@@ -66,19 +74,26 @@ const StockPage = () => {
                 const res = await fetch(`${apiBase}/api/upload`, {
                     method: 'POST',
                     body: formData
+                    // Note: Browser automatically sets multipart/form-data with boundary
                 });
+
                 const data = await res.json();
-                if (res.ok) {
+
+                if (res.ok && data.url) {
                     setFormData(prev => ({
                         ...prev,
-                        image: data.url // CHANGED: Set single image instead of array
+                        image: data.url
                     }));
                 } else {
-                    alert('Upload failed: ' + data.message);
+                    const errorMsg = data.message || 'Server returned an error';
+                    console.error('Upload Failed:', data);
+                    alert(`Upload failed: ${errorMsg}`);
                 }
             } catch (error) {
                 console.error('Upload Error', error);
-                alert('Upload failed');
+                alert('Upload failed: Network error or server timeout. Please try again.');
+            } finally {
+                setIsUploading(false);
             }
         }
     };
@@ -217,16 +232,32 @@ const StockPage = () => {
 
                         <div>
                             <label className="block text-sm font-medium mb-2">Product Image</label>
-                            <input type="file" accept="image/*" onChange={handleImageUpload} className="mb-2" />
-                            {formData.image && (
-                                <div className="relative w-32 h-32 border rounded overflow-hidden group">
-                                    <Image src={formData.image} alt="preview" className="w-full h-full object-cover" />
+                            <div className="flex items-center gap-4 mb-2">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                    disabled={isUploading}
+                                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800 cursor-pointer"
+                                />
+                                {isUploading && (
+                                    <div className="flex items-center gap-2 text-sm text-blue-600">
+                                        <div className="animate-spin h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full"></div>
+                                        Uploading to Cloudinary...
+                                    </div>
+                                )}
+                            </div>
+
+                            {formData.image && !isUploading && (
+                                <div className="relative w-40 h-40 border-2 border-dashed border-gray-200 rounded-lg overflow-hidden group hover:border-black transition-colors">
+                                    <Image src={formData.image} alt="preview" className="w-full h-full object-contain" />
                                     <button
                                         type="button"
                                         onClick={handleRemoveImage}
-                                        className="absolute top-0 right-0 bg-red-500 text-white p-1 text-xs opacity-0 group-hover:opacity-100"
+                                        className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                                        title="Remove Image"
                                     >
-                                        X
+                                        <Icon name="X" size={16} />
                                     </button>
                                 </div>
                             )}
