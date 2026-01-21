@@ -29,15 +29,24 @@ const AdminLayout = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex items-center">
-                            <span className="font-bold text-xl tracking-tight">Admin Panel</span>
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center overflow-hidden border border-gray-100">
+                                    <img
+                                        src="https://res.cloudinary.com/dh8ixjcnu/image/upload/v1737489597/premium_store_branding/store_logo.jpg"
+                                        alt="Premium Store"
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                                <span className="font-bold text-xl tracking-tight">Admin Panel</span>
+                            </div>
                             <div className="hidden md:ml-10 md:flex md:space-x-4">
                                 {navItems.map((item) => (
                                     <button
                                         key={item.path}
                                         onClick={() => navigate(item.path)}
                                         className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive(item.path)
-                                                ? 'bg-black text-white'
-                                                : 'text-gray-600 hover:bg-gray-100'
+                                            ? 'bg-black text-white'
+                                            : 'text-gray-600 hover:bg-gray-100'
                                             }`}
                                     >
                                         {item.label}

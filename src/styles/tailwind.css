@@ -9,67 +9,109 @@
 @layer base {
   :root {
     /* Brand Colors */
-    --color-primary: #1a1a1a; /* gray-900 - Confident brand presence */
-    --color-primary-foreground: #ffffff; /* white - High contrast for accessibility */
-    --color-secondary: #4a4a4a; /* gray-600 - Supporting content hierarchy */
-    --color-secondary-foreground: #ffffff; /* white - Clear readability */
-    --color-accent: #c9a96e; /* gold - Premium moments */
-    --color-accent-foreground: #1a1a1a; /* gray-900 - Strong contrast */
-    
+    --color-primary: #1a1a1a;
+    /* gray-900 - Confident brand presence */
+    --color-primary-foreground: #ffffff;
+    /* white - High contrast for accessibility */
+    --color-secondary: #4a4a4a;
+    /* gray-600 - Supporting content hierarchy */
+    --color-secondary-foreground: #ffffff;
+    /* white - Clear readability */
+    --color-accent: #c9a96e;
+    /* gold - Premium moments */
+    --color-accent-foreground: #1a1a1a;
+    /* gray-900 - Strong contrast */
+
     /* Background & Surface */
-    --color-background: #fafafa; /* gray-50 - Clean product showcase */
-    --color-foreground: #2d2d2d; /* gray-800 - Primary text */
-    --color-card: #ffffff; /* white - Elevated containers */
-    --color-card-foreground: #2d2d2d; /* gray-800 - Card text */
-    --color-popover: #ffffff; /* white - Overlay surfaces */
-    --color-popover-foreground: #2d2d2d; /* gray-800 - Popover text */
-    
+    --color-background: #fafafa;
+    /* gray-50 - Clean product showcase */
+    --color-foreground: #2d2d2d;
+    /* gray-800 - Primary text */
+    --color-card: #ffffff;
+    /* white - Elevated containers */
+    --color-card-foreground: #2d2d2d;
+    /* gray-800 - Card text */
+    --color-popover: #ffffff;
+    /* white - Overlay surfaces */
+    --color-popover-foreground: #2d2d2d;
+    /* gray-800 - Popover text */
+
     /* Muted & Subtle */
-    --color-muted: #f7fafc; /* gray-100 - Subtle backgrounds */
-    --color-muted-foreground: #6b6b6b; /* gray-500 - Secondary text */
-    
+    --color-muted: #f7fafc;
+    /* gray-100 - Subtle backgrounds */
+    --color-muted-foreground: #6b6b6b;
+    /* gray-500 - Secondary text */
+
     /* Interactive States */
-    --color-border: #e5e7eb; /* gray-200 - Subtle separation */
-    --color-input: #ffffff; /* white - Form backgrounds */
-    --color-ring: #c9a96e; /* gold - Focus indicators */
-    
+    --color-border: #e5e7eb;
+    /* gray-200 - Subtle separation */
+    --color-input: #ffffff;
+    /* white - Form backgrounds */
+    --color-ring: #c9a96e;
+    /* gold - Focus indicators */
+
     /* Semantic Colors */
-    --color-success: #2d5a27; /* green-800 - Stock availability */
-    --color-success-foreground: #ffffff; /* white - Success text */
-    --color-warning: #8b5a00; /* amber-800 - Low inventory */
-    --color-warning-foreground: #ffffff; /* white - Warning text */
-    --color-error: #8b2635; /* red-800 - Out of stock */
-    --color-error-foreground: #ffffff; /* white - Error text */
-    --color-destructive: #8b2635; /* red-800 - Destructive actions */
-    --color-destructive-foreground: #ffffff; /* white - Destructive text */
-    
+    --color-success: #2d5a27;
+    /* green-800 - Stock availability */
+    --color-success-foreground: #ffffff;
+    /* white - Success text */
+    --color-warning: #8b5a00;
+    /* amber-800 - Low inventory */
+    --color-warning-foreground: #ffffff;
+    /* white - Warning text */
+    --color-error: #8b2635;
+    /* red-800 - Out of stock */
+    --color-error-foreground: #ffffff;
+    /* white - Error text */
+    --color-destructive: #8b2635;
+    /* red-800 - Destructive actions */
+    --color-destructive-foreground: #ffffff;
+    /* white - Destructive text */
+
     /* Typography */
     --font-headline: 'Crimson Pro', serif;
     --font-body: 'Source Sans 3', sans-serif;
     --font-cta: 'DM Sans', sans-serif;
-    
+
     /* Spacing & Layout */
     --radius: 0.5rem;
   }
 
   .dark {
-    --color-background: #0f0f0f; /* gray-950 - Dark canvas */
-    --color-foreground: #fafafa; /* gray-50 - Light text */
-    --color-card: #1a1a1a; /* gray-900 - Dark cards */
-    --color-card-foreground: #fafafa; /* gray-50 - Card text */
-    --color-popover: #1a1a1a; /* gray-900 - Dark overlays */
-    --color-popover-foreground: #fafafa; /* gray-50 - Popover text */
-    --color-primary: #c9a96e; /* gold - Dark mode accent */
-    --color-primary-foreground: #1a1a1a; /* gray-900 - Dark contrast */
-    --color-secondary: #4a4a4a; /* gray-600 - Dark secondary */
-    --color-secondary-foreground: #fafafa; /* gray-50 - Secondary text */
-    --color-muted: #262626; /* gray-800 - Dark muted */
-    --color-muted-foreground: #a3a3a3; /* gray-400 - Muted text */
-    --color-accent: #c9a96e; /* gold - Dark accent */
-    --color-accent-foreground: #1a1a1a; /* gray-900 - Accent text */
-    --color-border: #404040; /* gray-700 - Dark borders */
-    --color-input: #262626; /* gray-800 - Dark inputs */
-    --color-ring: #c9a96e; /* gold - Dark focus */
+    --color-background: #0f0f0f;
+    /* gray-950 - Dark canvas */
+    --color-foreground: #fafafa;
+    /* gray-50 - Light text */
+    --color-card: #1a1a1a;
+    /* gray-900 - Dark cards */
+    --color-card-foreground: #fafafa;
+    /* gray-50 - Card text */
+    --color-popover: #1a1a1a;
+    /* gray-900 - Dark overlays */
+    --color-popover-foreground: #fafafa;
+    /* gray-50 - Popover text */
+    --color-primary: #c9a96e;
+    /* gold - Dark mode accent */
+    --color-primary-foreground: #1a1a1a;
+    /* gray-900 - Dark contrast */
+    --color-secondary: #4a4a4a;
+    /* gray-600 - Dark secondary */
+    --color-secondary-foreground: #fafafa;
+    /* gray-50 - Secondary text */
+    --color-muted: #262626;
+    /* gray-800 - Dark muted */
+    --color-muted-foreground: #a3a3a3;
+    /* gray-400 - Muted text */
+    --color-accent: #c9a96e;
+    /* gold - Dark accent */
+    --color-accent-foreground: #1a1a1a;
+    /* gray-900 - Accent text */
+    --color-border: #404040;
+    /* gray-700 - Dark borders */
+    --color-input: #262626;
+    /* gray-800 - Dark inputs */
+    --color-ring: #c9a96e;
+    /* gold - Dark focus */
   }
 
   * {
@@ -81,12 +123,18 @@
     font-family: var(--font-body);
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-headline);
   }
 }
 
 @layer components {
+
   /* Header Styles */
   .header {
     @apply fixed top-0 left-0 right-0 z-40 bg-card shadow-md;
@@ -99,7 +147,8 @@
   .header-logo {
     @apply flex items-center gap-3;
   }
-.header-logo-icon  {
+
+  .header-logo-icon {
     @apply w-10 h-10 rounded-lg flex items-center justify-center;
   }
 
@@ -113,41 +162,36 @@
   }
 
   .header-nav-link {
-    @apply text-sm font-medium text-foreground hover:text-primary transition-colors duration-200;
+    @apply text-sm font-medium text-muted-foreground hover:text-primary transition-all duration-300 relative py-1 hover:scale-105 active:scale-95;
     font-family: var(--font-body);
   }
 
-  .header-nav-link.active {
-    @apply text-primary;
+  .header-nav-link::after {
+    @apply content-[''] absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-300 ease-out;
   }
 
-  .header-actions {
-    @apply flex items-center gap-4;
-  }
-
-  .mobile-menu-button {
-    @apply lg:hidden fixed top-4 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-lg bg-card shadow-md;
-  }
-
-  /* Mobile Menu Styles */
-  .mobile-menu-overlay {
-    @apply fixed inset-0 z-40 bg-background lg:hidden;
-  }
-
-  .mobile-menu-container {
-    @apply flex flex-col h-full pt-20 px-6 pb-6;
-  }
-
-  .mobile-menu-nav {
-    @apply flex flex-col gap-2;
+  .header-nav-link:hover::after {
+    @apply w-full;
   }
 
   .mobile-menu-link {
-    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-muted transition-colors duration-200;
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-foreground hover:bg-muted transition-all duration-300 active:scale-95;
   }
 
   .mobile-menu-link.active {
-    @apply bg-primary text-primary-foreground;
+    @apply bg-primary text-primary-foreground shadow-lg;
+  }
+
+  .admin-btn {
+    @apply px-5 py-2 bg-primary text-primary-foreground rounded-full font-bold text-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 border border-amber-600/20 relative overflow-hidden;
+  }
+
+  .admin-btn::before {
+    @apply content-[''] absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-25deg] transition-all duration-1000 ease-in-out;
+  }
+
+  .admin-btn:hover::before {
+    @apply left-[100%];
   }
 
   .mobile-menu-link-text {
@@ -166,20 +210,26 @@
     font-family: var(--font-cta);
     animation: pulse-subtle 2s ease-in-out infinite;
   }
-.availability-badge.in-stock  {
+
+  .availability-badge.in-stock {
     @apply text-success-foreground;
   }
-.availability-badge.low-stock  {
+
+  .availability-badge.low-stock {
     @apply text-warning-foreground;
   }
-.availability-badge.out-of-stock  {
+
+  .availability-badge.out-of-stock {
     @apply text-error-foreground;
   }
 
   @keyframes pulse-subtle {
-    0%, 100% {
+
+    0%,
+    100% {
       transform: scale(1);
     }
+
     50% {
       transform: scale(1.05);
     }
@@ -221,22 +271,22 @@
   .cta-button:hover {
     @apply transform -translate-y-0.5 shadow-lg;
   }
-.cta-button-primary  {
+
+  .cta-button-primary {
     @apply bg-accent text-accent-foreground;
   }
-.cta-button-secondary  {
+
+  .cta-button-secondary {
     @apply bg-secondary text-secondary-foreground;
   }
 
   /* Gradient Mesh Background */
   .gradient-mesh {
     @apply absolute inset-0 opacity-5;
-    background: conic-gradient(
-      from 45deg,
-      var(--color-primary),
-      var(--color-secondary),
-      var(--color-muted)
-    );
+    background: conic-gradient(from 45deg,
+        var(--color-primary),
+        var(--color-secondary),
+        var(--color-muted));
     animation: rotate-mesh 20s linear infinite;
   }
 
@@ -244,6 +294,7 @@
     from {
       transform: rotate(0deg);
     }
+
     to {
       transform: rotate(0.5deg);
     }
@@ -282,12 +333,10 @@
   .skeleton-shimmer::after {
     @apply absolute inset-0;
     content: '';
-    background: linear-gradient(
-      90deg,
-      transparent 25%,
-      rgba(255, 255, 255, 0.2) 50%,
-      transparent 75%
-    );
+    background: linear-gradient(90deg,
+        transparent 25%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 75%);
     animation: shimmer 2s infinite;
   }
 
@@ -295,6 +344,7 @@
     0% {
       transform: translateX(-100%);
     }
+
     100% {
       transform: translateX(100%);
     }

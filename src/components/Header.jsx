@@ -40,17 +40,17 @@ const Header = () => {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="header-nav hidden md:flex gap-6 items-center">
+          <nav className="header-nav hidden md:flex gap-8 items-center">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className="text-gray-600 hover:text-black font-medium transition-colors"
+                className="header-nav-link"
               >
                 {item.label}
               </button>
             ))}
-            <Link to="/admin" className="ml-4 px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors">
+            <Link to="/admin" className="admin-btn ml-2">
               Admin
             </Link>
           </nav>
@@ -59,13 +59,13 @@ const Header = () => {
           <div className="header-actions md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="mobile-menu-button p-2"
+              className="p-2 transition-transform active:scale-90"
               aria-label="Toggle mobile menu"
             >
               <Icon
                 name={isMobileMenuOpen ? 'X' : 'Menu'}
                 size={24}
-                color="var(--color-foreground)"
+                color="var(--color-primary)"
               />
             </button>
           </div>
@@ -74,22 +74,24 @@ const Header = () => {
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="mobile-menu-overlay fixed inset-0 z-40 bg-white pt-20 px-4">
-          <nav className="mobile-menu-nav flex flex-col gap-4">
-            {navItems.map((item) => (
+        <div className="mobile-menu-overlay fixed inset-0 z-[60] bg-white pt-20 px-4">
+          <nav className="mobile-menu-nav flex flex-col gap-3">
+            {navItems.map((item, index) => (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className="flex items-center gap-3 p-3 text-lg border-b border-gray-100"
+                className="mobile-menu-link group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-50 transition-colors"
               >
-                <Icon name={item.icon} size={20} />
-                <span>{item.label}</span>
+                <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                  <Icon name={item.icon} size={20} className="text-slate-400 group-hover:text-primary" />
+                </div>
+                <span className="font-semibold text-slate-700">{item.label}</span>
               </button>
             ))}
             <Link
               to="/admin"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center gap-3 p-3 text-lg border-b border-gray-100 font-bold"
+              className="mt-6 flex items-center justify-center gap-2 py-4 bg-primary text-white rounded-xl font-bold"
             >
               <Icon name="LayoutDashboard" size={20} />
               <span>Admin Panel</span>

@@ -76,7 +76,7 @@ const StoreLocationModal = ({ isOpen, onClose }) => {
                         <div className="flex items-center gap-3">
                             <div className="w-12 h-12 bg-white shadow-sm rounded-full flex items-center justify-center overflow-hidden border border-gray-100">
                                 <img
-                                    src="/assets/images/logo.jpg"
+                                    src="https://res.cloudinary.com/dh8ixjcnu/image/upload/v1737489597/premium_store_branding/store_logo.jpg"
                                     alt="Premium Store"
                                     className="w-full h-full object-cover"
                                 />
