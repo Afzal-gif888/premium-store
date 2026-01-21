@@ -133,13 +133,13 @@ router.post('/', (req, res, next) => {
             // Stage 2: Local Storage Fallback
             const filePath = path.join(uploadsDir, filename);
 
-            console.log('Writing optimized file locally to:', filePath);
+            console.log('[UPLOAD] Writing optimized file locally:', filename);
             await fs.writeFile(filePath, optimizedBuffer);
 
-            const apiBase = `${req.protocol}://${req.get('host')}`;
-            const localUrl = `${apiBase}/uploads/${filename}`;
+            // Return relative path for cross-device compatibility
+            const localUrl = `/uploads/${filename}`;
 
-            console.log('Local Fallback Success:', localUrl);
+            console.log('[UPLOAD] Local Fallback Success:', localUrl);
 
             return res.status(200).json({
                 success: true,
