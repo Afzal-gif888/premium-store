@@ -13,12 +13,14 @@ function Image({
   alt = "Product Image",
   className = "",
   loading = "lazy",
+  width,
+  height,
   ...props
 }) {
   // Resolve source using central config
   const resolvedSrc = React.useMemo(() => {
-    return getImageUrl(src);
-  }, [src]);
+    return getImageUrl(src, { width, height });
+  }, [src, width, height]);
 
   const handleImageError = (e) => {
     const currentHost = window.location.hostname;

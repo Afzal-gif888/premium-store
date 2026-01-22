@@ -321,6 +321,35 @@
     @apply opacity-100 translate-y-0;
   }
 
+  /* Performance & Mobile UX Optimizations */
+  section {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 500px;
+  }
+
+  #announcements {
+    content-visibility: visible; /* Hero section should always be visible */
+  }
+
+  .mobile-menu-overlay {
+    overscroll-behavior: contain;
+  }
+
+  /* Enhanced touch targets for small screens */
+  @media (max-width: 640px) {
+    button, a {
+      min-height: 44px;
+      min-width: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cta-button {
+      @apply py-4; /* Larger target for mobile hero buttons */
+    }
+  }
+
   /* Skeleton Loading */
   .skeleton {
     @apply bg-muted rounded animate-pulse;

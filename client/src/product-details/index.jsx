@@ -112,6 +112,8 @@ const ProductDetails = () => {
               <Image
                 src={productImage}
                 alt={product.name || 'Product Image'}
+                width={1000}
+                height={1000}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -216,6 +218,8 @@ const ProductDetails = () => {
                     <Image
                       src={relatedProduct.image}
                       alt={relatedProduct.name}
+                      width={500}
+                      height={500}
                       className="product-card-image hover:scale-110 transition-transform duration-500"
                     />
                     {relatedProduct.isBestseller && (

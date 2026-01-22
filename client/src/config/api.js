@@ -16,9 +16,21 @@ export const API_ENDPOINTS = {
     PAYMENTS: `${API_BASE_URL}/api/payments`,
 };
 
-export const getImageUrl = (path) => {
+export const getImageUrl = (path, options = {}) => {
     if (!path) return '';
-    if (path.startsWith('http')) return path; // Already absolute (Cloudinary)
+
+    // Cloudinary dynamic resizing (saving bandwidth on mobile)
+    if (path.includes('cloudinary.com') && (options.width || options.height)) {
+        const parts = path.split('/upload/');
+        if (parts.length === 2) {
+            let transformation = `c_limit,q_auto,f_auto`;
+            if (options.width) transformation += `,w_${options.width}`;
+            if (options.height) transformation += `,h_${options.height}`;
+            return `${parts[0]}/upload/${transformation}/${parts[1]}`;
+        }
+    }
+
+    if (path.startsWith('http')) return path; // Already absolute
     if (path.startsWith('/uploads')) return `${API_BASE_URL}${path}`; // Local upload
     return path;
 };
