@@ -9,8 +9,7 @@ const announcementSchema = new mongoose.Schema({
         type: String
     },
     image: {
-        type: String,
-        required: true
+        type: String
     },
     createdAt: {
         type: Date,
