@@ -6,7 +6,6 @@ import HeroSection from './components/HeroSection';
 import FeaturedProducts from './components/FeaturedProducts';
 import Bestsellers from './components/Bestsellers';
 import CallToAction from './components/CallToAction';
-import Footer from './components/Footer';
 
 const Homepage = () => {
   const location = useLocation();
@@ -67,8 +66,6 @@ const Homepage = () => {
         <Bestsellers />
         <CallToAction />
       </main>
-
-      <Footer />
     </div>
   );
 };
