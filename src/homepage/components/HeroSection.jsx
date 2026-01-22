@@ -82,6 +82,7 @@ const HeroSection = () => {
               <Image
                 src={heroData?.heroImage}
                 alt={heroData?.heroImageAlt}
+                loading="eager"
                 className="w-full h-full object-cover" />
 
               <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent"></div>

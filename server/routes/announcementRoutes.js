@@ -9,7 +9,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
     try {
         // Sort by newest first
-        const announcements = await Announcement.find({}).sort({ createdAt: -1 });
+        const announcements = await Announcement.find({}).sort({ createdAt: -1 }).lean();
         res.json(announcements);
     } catch (error) {
         res.status(500).json({ message: error.message });

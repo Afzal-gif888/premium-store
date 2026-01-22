@@ -8,7 +8,7 @@ const router = express.Router();
 // @access  Public
 router.get('/', async (req, res) => {
     try {
-        const products = await Product.find({});
+        const products = await Product.find({}).lean();
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
 // @access  Public
 router.get('/collections', async (req, res) => {
     try {
-        const products = await Product.find({});
+        const products = await Product.find({}).lean();
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });
