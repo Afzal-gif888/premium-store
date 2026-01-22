@@ -1,12 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { API_ENDPOINTS } from 'config/api';
 
-const getApiBase = () => {
-    const hostname = window.location.hostname;
-    return `${window.location.protocol}//${hostname}:5000`;
-};
-
-const API_URL = `${getApiBase()}/api/announcements`;
+const API_URL = API_ENDPOINTS.ANNOUNCEMENTS;
 
 export const fetchAnnouncements = createAsyncThunk('announcements/fetchAnnouncements', async (_, { rejectWithValue }) => {
     try {

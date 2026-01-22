@@ -1,12 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { API_ENDPOINTS } from 'config/api';
 
-const getApiBase = () => {
-    const hostname = window.location.hostname;
-    return `${window.location.protocol}//${hostname}:5000`;
-};
-
-const API_URL = `${getApiBase()}/api/payments`;
+const API_URL = API_ENDPOINTS.PAYMENTS;
 
 export const fetchPayments = createAsyncThunk('payments/fetchPayments', async (_, { rejectWithValue }) => {
     try {

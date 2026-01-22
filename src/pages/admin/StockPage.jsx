@@ -4,6 +4,7 @@ import { fetchProducts, addProduct, updateProduct, deleteProduct } from 'store/s
 import Button from 'components/ui/Button';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
+import { API_ENDPOINTS } from 'config/api';
 
 const SIZES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 
@@ -70,8 +71,8 @@ const StockPage = () => {
             formData.append('image', file);
 
             try {
-                const apiBase = `${window.location.protocol}//${window.location.hostname}:5000`;
-                const res = await fetch(`${apiBase}/api/upload`, {
+                // Use centralized endpoint
+                const res = await fetch(API_ENDPOINTS.UPLOAD, {
                     method: 'POST',
                     body: formData
                     // Note: Browser automatically sets multipart/form-data with boundary

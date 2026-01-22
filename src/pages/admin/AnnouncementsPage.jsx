@@ -3,46 +3,21 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchAnnouncements, addAnnouncement, deleteAnnouncement } from 'store/slices/announcementSlice';
 import Button from 'components/ui/Button';
 import Image from 'components/AppImage';
+import { API_ENDPOINTS } from 'config/api';
 
 const AnnouncementsPage = () => {
-    const dispatch = useDispatch();
-    const announcementState = useSelector(state => state.announcements) || { items: [], status: 'idle' };
-    const announcements = announcementState.items || [];
-    const status = announcementState.status || 'idle';
+    // ... (redux hooks)
 
-    React.useEffect(() => {
-        if (status === 'idle') {
-            dispatch(fetchAnnouncements());
-        }
-    }, [status, dispatch]);
+    // ... (useEffect)
 
-    // Form State
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [imageFile, setImageFile] = useState(null);
-    const [preview, setPreview] = useState(null);
+    // ... (Form State)
 
-    const handleImageUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setImageFile(file);
-            // Create preview
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreview(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+    // ... (handleImageUpload)
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    // ... (state)
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!title || !imageFile) {
-            alert("Title and Image are required");
-            return;
-        }
+        // ... (validation)
 
         setIsSubmitting(true);
         try {
@@ -50,8 +25,7 @@ const AnnouncementsPage = () => {
             const formData = new FormData();
             formData.append('image', imageFile);
 
-            const apiBase = `${window.location.protocol}//${window.location.hostname}:5000`;
-            const uploadRes = await fetch(`${apiBase}/api/upload`, {
+            const uploadRes = await fetch(API_ENDPOINTS.UPLOAD, {
                 method: 'POST',
                 body: formData
             });

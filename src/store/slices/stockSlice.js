@@ -1,14 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { API_ENDPOINTS } from 'config/api';
 
-const getApiBase = () => {
-    const hostname = window.location.hostname;
-    // If we're on localhost, use localhost:5000. 
-    // If we're on a network IP (mobile access), use that IP:5000
-    return `${window.location.protocol}//${hostname}:5000`;
-};
-
-const API_URL = `${getApiBase()}/api/products`;
+const API_URL = API_ENDPOINTS.PRODUCTS;
 
 export const fetchProducts = createAsyncThunk('stock/fetchProducts', async (_, { rejectWithValue }) => {
     try {

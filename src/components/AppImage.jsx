@@ -6,12 +6,7 @@ import React from 'react';
  * In a local network dev environment, we need the computer's IP, 
  * not 'localhost', so mobile devices can reach the server.
  */
-const getBackendUrl = () => {
-  // If the URL is already absolute (Cloudinary), return as is
-  // Otherwise, we assume it's a relative path like '/uploads/...'
-  const host = window.location.hostname;
-  return `http://${host}:5000`; // Port 5000 is default for backend
-};
+import { getImageUrl } from 'config/api';
 
 function Image({
   src,
@@ -20,13 +15,9 @@ function Image({
   loading = "lazy",
   ...props
 }) {
-  // Resolve source: if it starts with /uploads, prepend the backend URL
+  // Resolve source using central config
   const resolvedSrc = React.useMemo(() => {
-    if (!src) return null;
-    if (src.startsWith('/uploads')) {
-      return `${getBackendUrl()}${src}`;
-    }
-    return src;
+    return getImageUrl(src);
   }, [src]);
 
   const handleImageError = (e) => {
