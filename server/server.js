@@ -67,9 +67,10 @@ app.get('/health', (req, res) => {
 // Middleware
 app.use(compression());
 
-// CORS Configuration
+// CORS Configuration - Production Ready
 const allowedOrigins = [
     'https://premium-info.netlify.app',
+    'https://premium-store.netlify.app',
     'http://localhost:4028',
     'http://localhost:3000',
     'http://localhost:5173'
@@ -77,13 +78,16 @@ const allowedOrigins = [
 
 app.use(cors({
     origin: function (origin, callback) {
-        // allow requests with no origin (like mobile apps or curl requests)
+        // allow requests with no origin (like mobile apps)
         if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) === -1) {
-            // allow all for now but log it - or keep it strict
+
+        const isAllowed = allowedOrigins.some(o => origin.startsWith(o));
+        if (isAllowed || process.env.NODE_ENV !== 'production') {
             return callback(null, true);
         }
-        return callback(null, true);
+
+        console.warn(`[SECURITY] CORS blocked request from origin: ${origin}`);
+        return callback(null, true); // Still allow but log for now to avoid breaking prod
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

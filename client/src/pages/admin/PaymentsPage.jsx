@@ -45,6 +45,16 @@ const PaymentsPage = () => {
         return <div className="flex justify-center p-10"><div className="animate-spin h-8 w-8 border-4 border-black border-t-transparent rounded-full"></div></div>;
     }
 
+    if (status === 'failed') {
+        return (
+            <div className="bg-red-50 p-10 rounded-lg text-center border border-red-100 mb-6">
+                <h3 className="text-xl font-bold text-red-800">History Connection Error</h3>
+                <p className="text-red-600 mt-2">{paymentState.error || 'Failed to sync payment records.'}</p>
+                <Button onClick={() => window.location.reload()} className="mt-6" variant="danger">Retry Sync</Button>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6">
             <h1 className="text-2xl font-bold">Payments Ledger</h1>
