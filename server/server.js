@@ -70,7 +70,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/payments', paymentRoutes);
 
 // Static files & SPA Fallback
-const buildPath = path.join(__dirname, '../build');
+const buildPath = path.join(__dirname, '../client/build');
 app.use(express.static(buildPath));
 
 // Redirect all non-API requests to index.html for React Router to handle
