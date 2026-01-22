@@ -8,7 +8,7 @@ export const STORE_LOCATION = {
     lng: 78.73716675483196,
     name: "Premium Store",
     address: "Beside Bharath Theatre Street, Upstairs Of RI Fashion Mydukur",
-    phone: "+919701645812",
+    phone: "+918074463123",
     googlePlaceId: "ChIJu7S-p6_xTzoR9fU9qY7I8gI", // Placeholder or real
     hours: {
         weekday: { open: "10:00", close: "20:00" }, // Mon-Sat

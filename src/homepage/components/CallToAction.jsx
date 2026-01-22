@@ -77,7 +77,7 @@ const CallToAction = () => {
             >
               <Icon name="Phone" size={32} color="var(--color-accent)" />
               <h3 className="text-lg md:text-xl font-semibold">Help Line</h3>
-              <p className="text-sm md:text-base opacity-80">+91 9701645812</p>
+              <p className="text-sm md:text-base opacity-80">+91 8074463123</p>
             </a>
           </div>
 
