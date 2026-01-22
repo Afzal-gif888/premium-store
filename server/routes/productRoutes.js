@@ -6,6 +6,13 @@ import apicache from 'apicache';
 const router = express.Router();
 const cache = apicache.middleware;
 
+// Helper to clear product cache
+const clearProductCache = () => {
+    apicache.clear('/api/products');
+    apicache.clear('/api/products/collections');
+    console.log('[CACHE] Product cache cleared for all routes');
+};
+
 // @desc    Fetch all products
 // @route   GET /api/products
 // @access  Public
@@ -72,6 +79,7 @@ router.post('/', async (req, res) => {
         });
 
         const createdProduct = await product.save();
+        clearProductCache();
         res.status(201).json(createdProduct);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -96,6 +104,7 @@ router.put('/:id', async (req, res) => {
             // Note: isBestseller NOT updated here - use PATCH endpoint
 
             const updatedProduct = await product.save();
+            clearProductCache();
             res.json(updatedProduct);
         } else {
             res.status(404).json({ message: 'Product not found' });
@@ -111,16 +120,24 @@ router.put('/:id', async (req, res) => {
 router.patch('/:id/bestseller', async (req, res) => {
     try {
         const { isBestseller } = req.body;
+        console.log(`[ROUTE] Toggle Bestseller - ID: ${req.params.id}, New Value: ${isBestseller}`);
+
         const product = await Product.findById(req.params.id);
 
         if (product) {
             product.isBestseller = isBestseller;
             const updatedProduct = await product.save();
+
+            console.log(`[SUCCESS] Bestseller updated for ${product.name}`);
+            clearProductCache();
+
             res.json(updatedProduct);
         } else {
+            console.warn(`[WARN] Product not found for toggle: ${req.params.id}`);
             res.status(404).json({ message: 'Product not found' });
         }
     } catch (error) {
+        console.error(`[ERROR] Toggle Bestseller failed: ${error.message}`);
         res.status(400).json({ message: error.message });
     }
 });
@@ -133,6 +150,7 @@ router.delete('/:id', async (req, res) => {
         const product = await Product.findById(req.params.id);
         if (product) {
             await product.deleteOne();
+            clearProductCache();
             res.json({ message: 'Product removed' });
         } else {
             res.status(404).json({ message: 'Product not found' });

@@ -45,11 +45,19 @@ const BestsellersPage = () => {
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${Number(product.price || 0).toFixed(2)}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-center">
                                     <button
+                                        disabled={status === 'updating'}
                                         onClick={() => {
-                                            dispatch(toggleBestseller({ id: product._id || product.id, isBestseller: !product.isBestseller }))
-                                                .then(() => dispatch(fetchProducts()));
+                                            const originalStatus = product.isBestseller;
+                                            dispatch(toggleBestseller({ id: product._id || product.id, isBestseller: !originalStatus }))
+                                                .unwrap()
+                                                .then(() => {
+                                                    console.log(`Successfully updated bestseller status for ${product.name}`);
+                                                })
+                                                .catch((err) => {
+                                                    alert(`Failed to update ${product.name}: ${err}`);
+                                                });
                                         }}
-                                        className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${product.isBestseller ? 'bg-indigo-600' : 'bg-gray-200'}`}
+                                        className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${product.isBestseller ? 'bg-indigo-600' : 'bg-gray-200'} ${status === 'updating' ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     >
                                         <span className="sr-only">Use setting</span>
                                         <span

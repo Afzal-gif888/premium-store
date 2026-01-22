@@ -89,7 +89,11 @@ const stockSlice = createSlice({
             .addCase(deleteProduct.fulfilled, (state, action) => {
                 state.products = state.products.filter(p => p._id !== action.payload);
             })
+            .addCase(toggleBestseller.pending, (state) => {
+                state.status = 'updating';
+            })
             .addCase(toggleBestseller.fulfilled, (state, action) => {
+                state.status = 'succeeded';
                 const index = state.products.findIndex(p => p._id === action.payload._id);
                 if (index !== -1) {
                     state.products[index] = action.payload;
