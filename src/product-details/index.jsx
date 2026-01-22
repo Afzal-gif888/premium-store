@@ -15,6 +15,7 @@ const ProductDetails = () => {
   const products = Array.isArray(stockState.products) ? stockState.products : [];
   const status = stockState.status || 'idle';
   const [selectedSize, setSelectedSize] = useState(null);
+  const [storeButtonClicked, setStoreButtonClicked] = useState(false);
 
   // Fetch products if not already loaded or idle
   React.useEffect(() => {
@@ -134,7 +135,10 @@ const ProductDetails = () => {
                   <button
                     key={item.size}
                     disabled={!item.available}
-                    onClick={() => setSelectedSize(item)}
+                    onClick={() => {
+                      setSelectedSize(item);
+                      setStoreButtonClicked(false);
+                    }}
                     className={`
                                             py-3 text-sm font-bold rounded-md border
                                             ${selectedSize?.size === item.size
@@ -174,11 +178,18 @@ const ProductDetails = () => {
             </div>
 
             <button
-              className="w-full bg-black text-white py-4 rounded-lg font-bold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`w-full py-4 rounded-lg font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${storeButtonClicked
+                ? 'bg-green-600 text-white cursor-default'
+                : 'bg-black text-white hover:bg-gray-800'
+                }`}
               disabled={!selectedSize}
-              onClick={() => alert("Please visit our store to purchase!")}
+              onClick={() => setStoreButtonClicked(true)}
             >
-              {selectedSize ? 'Available at Store' : 'Select a Size'}
+              {!selectedSize
+                ? 'Select a Size'
+                : storeButtonClicked
+                  ? '✓ Please Visit the Store'
+                  : 'Available at Store'}
             </button>
           </div>
         </div>
