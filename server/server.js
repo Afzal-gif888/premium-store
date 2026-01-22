@@ -46,11 +46,21 @@ const PORT = process.env.PORT || 5000;
 
 // Health check endpoint - MUST be before other routes and DB check
 app.get('/health', (req, res) => {
+    const dbStatus = mongoose.connection.readyState;
+    const dbStatusMap = {
+        0: 'disconnected',
+        1: 'connected',
+        2: 'connecting',
+        3: 'disconnecting'
+    };
+
     res.status(200).json({
         status: 'UP',
         timestamp: new Date().toISOString(),
+        database: dbStatusMap[dbStatus] || 'unknown',
         uptime: process.uptime(),
-        memory: process.memoryUsage()
+        env: process.env.NODE_ENV || 'development',
+        port: PORT
     });
 });
 
@@ -91,20 +101,21 @@ const connectDB = async () => {
         const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
         if (!mongoUri) {
             console.error('[DB] Error: No MongoDB URI provided in environment variables');
-            return; // Don't exit yet, let the app stay up so we can see logs
+            return;
         }
 
+        // Mask password for logging
         const maskedUri = mongoUri.replace(/\/\/.*@/, '//****:****@');
         console.log(`[DB] Attempting connection to ${maskedUri.split('/')[2]}...`);
 
-        const conn = await mongoose.connect(mongoUri, {
-            serverSelectionTimeoutMS: 5000, // Timeout after 5 seconds instead of default 30s
+        await mongoose.connect(mongoUri, {
+            serverSelectionTimeoutMS: 5000,
             connectTimeoutMS: 10000,
+            bufferCommands: false, // DON'T buffer if not connected!
         });
-        console.log(`[DB] Connected: ${conn.connection.host}`);
+        console.log(`[DB] Connected: ${mongoose.connection.host}`);
     } catch (error) {
         console.error(`[DB] CONNECTION ERROR: ${error.message}`);
-        // In production, we might want to retry rather than exit
         console.log('[DB] Application will continue to run without DB for diagnostics.');
     }
 };

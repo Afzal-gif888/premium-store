@@ -75,7 +75,7 @@ const stockSlice = createSlice({
             })
             .addCase(fetchProducts.rejected, (state, action) => {
                 state.status = 'failed';
-                state.error = action.error.message;
+                state.error = (typeof action.payload === 'string' ? action.payload : action.payload?.message) || action.error.message;
             })
             .addCase(addProduct.fulfilled, (state, action) => {
                 state.products.push(action.payload);

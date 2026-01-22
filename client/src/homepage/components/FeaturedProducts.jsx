@@ -33,10 +33,11 @@ const FeaturedProducts = () => {
   }
 
   if (status === 'failed') {
+    const errorMessage = stockState.error || 'Could not reach the database. Please check if the server is running.';
     return (
       <div className="bg-red-50 p-10 rounded-lg text-center border border-red-100">
         <h3 className="text-xl font-bold text-red-800">Connection Error</h3>
-        <p className="text-red-600 mt-2">Could not reach the database. Please check if the server is running.</p>
+        <p className="text-red-600 mt-2">{errorMessage}</p>
         <Button onClick={() => window.location.reload()} className="mt-6" variant="danger">Retry Refresh</Button>
       </div>
     );

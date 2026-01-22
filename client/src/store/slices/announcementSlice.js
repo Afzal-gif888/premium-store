@@ -55,7 +55,7 @@ const announcementSlice = createSlice({
             })
             .addCase(fetchAnnouncements.rejected, (state, action) => {
                 state.status = 'failed';
-                state.error = action.error.message;
+                state.error = (typeof action.payload === 'string' ? action.payload : action.payload?.message) || action.error.message;
             })
             .addCase(addAnnouncement.fulfilled, (state, action) => {
                 state.items.unshift(action.payload);
