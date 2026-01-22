@@ -1,18 +1,49 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'components/AppImage';
 import Button from 'components/ui/Button';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAnnouncements } from 'store/slices/announcementSlice';
 import bgimg from './bgimg.jpg';
 
 const HeroSection = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const announcements = useSelector(state => state.announcements.items);
+  const status = useSelector(state => state.announcements.status);
 
-  const heroData = {
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchAnnouncements());
+    }
+  }, [status, dispatch]);
+
+  const latestAnnouncement = announcements.length > 0 ? announcements[0] : null;
+
+  const heroData = latestAnnouncement ? {
+    title: latestAnnouncement.title,
+    subtitle: latestAnnouncement.description,
+    ctaPrimary: "Browse Collection",
+    heroImage: latestAnnouncement.image,
+    heroImageAlt: latestAnnouncement.title,
+    isAnnouncement: true
+  } : {
     title: "Premium Footwear, Guaranteed Availability",
     subtitle: "Know before you go. Discover our collection with real-time stock updates.",
     ctaPrimary: "Browse Collection",
     heroImage: bgimg,
-    heroImageAlt: "Elegant display of premium leather shoes arranged on modern minimalist shelving with soft natural lighting highlighting craftsmanship and quality materials in sophisticated retail environment"
+    heroImageAlt: "Elegant display of premium leather shoes",
+    isAnnouncement: false
+  };
+
+  const handleCtaClick = () => {
+    const el = document.getElementById('collections');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // Fallback if ID is missing on current page
+      navigate('/collection');
+    }
   };
 
   return (
@@ -22,6 +53,11 @@ const HeroSection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
 
           <div className="scroll-reveal space-y-6 md:space-y-8 lg:space-y-10 text-center lg:text-left">
+            {heroData.isAnnouncement && (
+              <span className="inline-block px-4 py-1.5 bg-accent/10 text-accent text-xs font-bold rounded-full uppercase tracking-wider mb-2">
+                New Announcement
+              </span>
+            )}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
               {heroData?.title}
             </h1>
@@ -34,12 +70,8 @@ const HeroSection = () => {
               <Button
                 variant="default"
                 size="lg"
-                onClick={() => {
-                  const el = document.getElementById('collections');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
+                onClick={handleCtaClick}
                 className="cta-button cta-button-primary">
-
                 {heroData?.ctaPrimary}
               </Button>
             </div>
@@ -60,7 +92,6 @@ const HeroSection = () => {
       </div>
     </section>
   );
-
 };
 
 export default HeroSection;

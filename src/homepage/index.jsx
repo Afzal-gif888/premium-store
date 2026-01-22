@@ -5,7 +5,6 @@ import Header from 'components/Header';
 import HeroSection from './components/HeroSection';
 import FeaturedProducts from './components/FeaturedProducts';
 import Bestsellers from './components/Bestsellers';
-import AnnouncementPreview from './components/Announcementpreview';
 import CallToAction from './components/CallToAction';
 import Footer from './components/Footer';
 
@@ -66,7 +65,6 @@ const Homepage = () => {
         <HeroSection />
         <FeaturedProducts />
         <Bestsellers />
-        <AnnouncementPreview />
         <CallToAction />
       </main>
 

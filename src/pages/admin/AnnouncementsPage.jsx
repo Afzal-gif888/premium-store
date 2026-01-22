@@ -62,13 +62,23 @@ const AnnouncementsPage = () => {
                 throw new Error(uploadData.message || 'Image upload failed to Cloudinary');
             }
 
-            // 2. Create Announcement
+            // 2. Create NEW Announcement Object
             const newAnnouncement = {
                 title,
                 description,
                 image: uploadData.url,
             };
 
+            // 3. Delete existing announcements (user doesn't want them stored)
+            for (const item of announcements) {
+                try {
+                    await dispatch(deleteAnnouncement(item._id || item.id)).unwrap();
+                } catch (delError) {
+                    console.error('Failed to delete old announcement:', delError);
+                }
+            }
+
+            // 4. Create NEW Announcement
             await dispatch(addAnnouncement(newAnnouncement)).unwrap();
             dispatch(fetchAnnouncements());
 
@@ -146,28 +156,30 @@ const AnnouncementsPage = () => {
             </div>
 
             <div className="space-y-4">
-                <h2 className="text-xl font-bold">History</h2>
-                {announcements.map((item, index) => (
-                    <div key={item._id || item.id} className="bg-white p-4 rounded-lg shadow border flex gap-4 items-start relative">
-                        <div className="w-24 h-24 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
-                            <Image src={item.image} alt="" className="w-full h-full object-cover" />
+                <h2 className="text-xl font-bold">Current Active Announcement</h2>
+                {announcements.length > 0 ? (
+                    <div className="bg-white p-4 rounded-lg shadow border flex gap-4 items-start relative border-green-200 bg-green-50/30">
+                        <div className="w-24 h-24 flex-shrink-0 bg-gray-100 rounded overflow-hidden border">
+                            <Image src={announcements[0].image} alt="" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1">
                             <div className="flex items-center gap-2">
-                                <h3 className="font-bold text-lg">{item.title}</h3>
-                                {index === 0 && <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Active Hero</span>}
+                                <h3 className="font-bold text-lg">{announcements[0].title}</h3>
+                                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Active</span>
                             </div>
-                            <p className="text-gray-600 mt-1">{item.description}</p>
-                            <p className="text-xs text-gray-400 mt-2">Posted: {new Date(item.createdAt).toLocaleDateString()}</p>
+                            <p className="text-gray-600 mt-1">{announcements[0].description}</p>
+                            <p className="text-xs text-gray-400 mt-2">Published: {new Date(announcements[0].createdAt).toLocaleString()}</p>
                         </div>
                         <button
-                            onClick={() => handleDelete(item._id || item.id)}
+                            onClick={() => handleDelete(announcements[0]._id || announcements[0].id)}
                             className="text-red-500 text-sm hover:underline absolute top-4 right-4"
                         >
-                            Delete
+                            Remove
                         </button>
                     </div>
-                ))}
+                ) : (
+                    <p className="text-gray-500 italic">No active announcement. Publish one above.</p>
+                )}
             </div>
         </div>
     );
