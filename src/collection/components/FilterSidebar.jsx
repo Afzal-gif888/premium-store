@@ -4,21 +4,14 @@ import Button from 'components/ui/Button';
 import { Checkbox } from 'components/ui/Checkbox';
 import Select from 'components/ui/Select';
 
-const FilterSidebar = ({ 
-  filters, 
-  onFilterChange, 
-  onClearFilters, 
-  isMobileFilterOpen, 
-  onCloseMobileFilter 
+const FilterSidebar = ({
+  filters,
+  onFilterChange,
+  onClearFilters,
+  isMobileFilterOpen,
+  onCloseMobileFilter
 }) => {
-  const categories = [
-    { value: 'all', label: 'All Products' },
-    { value: 'sneakers', label: 'Sneakers' },
-    { value: 'boots', label: 'Boots' },
-    { value: 'loafers', label: 'Loafers' },
-    { value: 'sandals', label: 'Sandals' },
-    { value: 'formal', label: 'Formal Shoes' }
-  ];
+
 
   const sizes = ['6', '7', '8', '9', '10', '11', '12', '13'];
 
@@ -37,9 +30,7 @@ const FilterSidebar = ({
     { id: 'out-of-stock', label: 'Out of Stock', color: 'error' }
   ];
 
-  const handleCategoryChange = (value) => {
-    onFilterChange('category', value);
-  };
+
 
   const handleSizeToggle = (size) => {
     const newSizes = filters?.sizes?.includes(size)
@@ -76,17 +67,7 @@ const FilterSidebar = ({
         </Button>
       </div>
 
-      <div className="space-y-4">
-        <h3 className="text-sm md:text-base font-semibold text-foreground" style={{ fontFamily: 'var(--font-cta)' }}>
-          Category
-        </h3>
-        <Select
-          options={categories}
-          value={filters?.category}
-          onChange={handleCategoryChange}
-          placeholder="Select category"
-        />
-      </div>
+
 
       <div className="space-y-4">
         <h3 className="text-sm md:text-base font-semibold text-foreground" style={{ fontFamily: 'var(--font-cta)' }}>
@@ -152,7 +133,7 @@ const FilterSidebar = ({
 
       {isMobileFilterOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div 
+          <div
             className="absolute inset-0 bg-background/80 backdrop-blur-sm"
             onClick={onCloseMobileFilter}
           />
