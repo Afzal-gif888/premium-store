@@ -4,8 +4,8 @@ const getApiUrl = () => {
         return import.meta.env.VITE_API_URL;
     }
 
-    // Fallback for local development
-    return 'http://localhost:5000';
+    // Fallback for local development (Dynamic for mobile/network access)
+    return `${window.location.protocol}//${window.location.hostname}:5000`;
 };
 
 export const API_BASE_URL = getApiUrl();

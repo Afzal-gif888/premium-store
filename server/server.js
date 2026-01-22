@@ -93,7 +93,7 @@ app.use((err, req, res, next) => {
 // Start Server only after DB connection
 const startServer = async () => {
     await connectDB();
-    const server = app.listen(PORT, () => {
+    const server = app.listen(PORT, '0.0.0.0', () => {
         console.log(`Server running on port ${PORT}`);
     });
     server.timeout = 300000;
