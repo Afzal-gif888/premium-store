@@ -6,18 +6,43 @@ import Image from 'components/AppImage';
 import { API_ENDPOINTS } from 'config/api';
 
 const AnnouncementsPage = () => {
-    // ... (redux hooks)
+    const dispatch = useDispatch();
+    const announcementState = useSelector(state => state.announcements) || { items: [], status: 'idle' };
+    const announcements = announcementState.items || [];
+    const status = announcementState.status || 'idle';
 
-    // ... (useEffect)
+    React.useEffect(() => {
+        if (status === 'idle') {
+            dispatch(fetchAnnouncements());
+        }
+    }, [status, dispatch]);
 
-    // ... (Form State)
+    // Form State
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [imageFile, setImageFile] = useState(null);
+    const [preview, setPreview] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // ... (handleImageUpload)
-
-    // ... (state)
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImageFile(file);
+            // Create preview
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const handleSubmit = async (e) => {
-        // ... (validation)
+        e.preventDefault();
+        if (!title || !imageFile) {
+            alert("Title and Image are required");
+            return;
+        }
 
         setIsSubmitting(true);
         try {
