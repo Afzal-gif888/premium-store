@@ -88,11 +88,18 @@ app.use((err, req, res, next) => {
 });
 
 // Start Server only after DB connection
-connectDB().then(() => {
+const startServer = async () => {
+    await connectDB();
     const server = app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
     });
+    server.timeout = 300000;
+};
 
-    // Increase server timeout for long uploads
-    server.timeout = 300000; // 5 minutes
-});
+// Check if this file is being run directly
+import { fileURLToPath } from 'url';
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+    startServer();
+}
+
+export default app;
