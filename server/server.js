@@ -15,10 +15,44 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config({ path: path.join(__dirname, '.env') });
+// Load environment variables
+const envPaths = [
+    path.join(__dirname, '.env'),
+    path.join(__dirname, '..', '.env')
+];
+
+envPaths.forEach(envPath => {
+    if (fs.existsSync(envPath)) {
+        dotenv.config({ path: envPath });
+        console.log(`[INIT] Loaded env from ${envPath}`);
+    }
+});
+
+// Validate critical environment variables
+const requiredEnvVars = ['CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];
+const hasMongo = process.env.MONGODB_URI || process.env.MONGO_URI;
+const missingVars = requiredEnvVars.filter(v => !process.env[v]);
+
+if (!hasMongo) missingVars.push('MONGO_URI or MONGODB_URI');
+
+if (missingVars.length > 0) {
+    console.error(`[CRITICAL] Missing required environment variables: ${missingVars.join(', ')}`);
+    console.error('Please ensure these are set in your deployment platform (e.g., Railway Variables tab) or a .env file.');
+    // Don't exit yet, let the connection attempt fail naturally or provide more context
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Health check endpoint - MUST be before other routes and DB check
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        status: 'UP',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        memory: process.memoryUsage()
+    });
+});
 
 // Middleware
 app.use(compression());
@@ -54,12 +88,24 @@ app.use('/uploads', express.static(uploadsPath));
 // Database Connection
 const connectDB = async () => {
     try {
-        console.log('[DB] Attempting connection...');
-        const conn = await mongoose.connect(process.env.MONGO_URI);
+        const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
+        if (!mongoUri) {
+            console.error('[DB] Error: No MongoDB URI provided in environment variables');
+            return; // Don't exit yet, let the app stay up so we can see logs
+        }
+
+        const maskedUri = mongoUri.replace(/\/\/.*@/, '//****:****@');
+        console.log(`[DB] Attempting connection to ${maskedUri.split('/')[2]}...`);
+
+        const conn = await mongoose.connect(mongoUri, {
+            serverSelectionTimeoutMS: 5000, // Timeout after 5 seconds instead of default 30s
+            connectTimeoutMS: 10000,
+        });
         console.log(`[DB] Connected: ${conn.connection.host}`);
     } catch (error) {
-        console.error(`[DB] CRITICAL ERROR: ${error.message}`);
-        process.exit(1);
+        console.error(`[DB] CONNECTION ERROR: ${error.message}`);
+        // In production, we might want to retry rather than exit
+        console.log('[DB] Application will continue to run without DB for diagnostics.');
     }
 };
 
@@ -90,19 +136,34 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Start Server only after DB connection
+// Start Server
 const startServer = async () => {
-    await connectDB();
+    console.log(`[INIT] Starting server in ${process.env.NODE_ENV || 'development'} mode...`);
+
+    // Listen on PORT immediately to satisfy Railway's health check
     const server = app.listen(PORT, '0.0.0.0', () => {
-        console.log(`Server running on port ${PORT}`);
+        console.log(`[SUCCESS] Server is listening on port ${PORT}`);
+        console.log(`[INFO] Health check available at /health`);
     });
+
     server.timeout = 300000;
+
+    // Connect to database in the background/sequentially but after listening
+    await connectDB();
 };
 
-// Check if this file is being run directly
-// Check if this file is being run directly
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-    startServer();
+// Auto-start if run directly
+const isMainModule = (path) => {
+    if (!path) return false;
+    const normalizedPath = path.replace(/\\/g, '/');
+    return normalizedPath.endsWith('server/server.js') || normalizedPath.endsWith('server.js');
+};
+
+if (isMainModule(process.argv[1])) {
+    startServer().catch(err => {
+        console.error('[FATAL] Failed to start server:', err);
+        process.exit(1);
+    });
 }
 
 export default app;

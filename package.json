@@ -3,13 +3,13 @@
     "version": "1.0.0",
     "type": "module",
     "engines": {
-        "node": "20.x"
+        "node": "18.x"
     },
     "scripts": {
-        "install:server": "npm install --prefix server",
-        "install:client": "npm install --prefix client",
+        "install:server": "npm install --prefix server --no-audit --no-fund",
+        "install:client": "npm install --prefix client --no-audit --no-fund",
         "build:client": "npm run build --prefix client",
-        "build": "npm run install:client && npm run build:client && npm run install:server",
+        "build": "npm run install:client && npm run build:client",
         "start": "node server/server.js",
         "railway-build": "npm run build"
     },

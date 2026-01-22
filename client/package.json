@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "20.x"
+    "node": "18.x"
   },
   "rocketCritical": {
     "dependencies": [
@@ -60,6 +60,7 @@
   "scripts": {
     "start": "vite",
     "build": "vite build --sourcemap",
+    "preview": "vite preview",
     "serve": "vite preview",
     "server": "node server/server.js",
     "seed": "node server/seed.js",

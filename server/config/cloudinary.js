@@ -7,7 +7,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+// Environment variables are globally loaded in server.js
+// No need to call dotenv.config() here again if imported from server.js
 
 const cloudName = process.env.CLOUDINARY_CLOUD_NAME?.trim();
 const apiKey = process.env.CLOUDINARY_API_KEY?.trim();
