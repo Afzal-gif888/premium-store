@@ -97,7 +97,7 @@ const startServer = async () => {
 };
 
 // Check if this file is being run directly
-import { fileURLToPath } from 'url';
+// Check if this file is being run directly
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
     startServer();
 }

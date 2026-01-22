@@ -1,12 +1,15 @@
 import express from 'express';
 import Product from '../models/Product.js';
 
+import apicache from 'apicache';
+
 const router = express.Router();
+const cache = apicache.middleware;
 
 // @desc    Fetch all products
 // @route   GET /api/products
 // @access  Public
-router.get('/', async (req, res) => {
+router.get('/', cache('5 minutes'), async (req, res) => {
     try {
         const products = await Product.find({}).lean();
         res.json(products);
@@ -18,7 +21,7 @@ router.get('/', async (req, res) => {
 // @desc    Fetch all products (Alias for collections)
 // @route   GET /api/products/collections
 // @access  Public
-router.get('/collections', async (req, res) => {
+router.get('/collections', cache('5 minutes'), async (req, res) => {
     try {
         const products = await Product.find({}).lean();
         res.json(products);

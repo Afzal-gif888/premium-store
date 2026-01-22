@@ -1,12 +1,15 @@
 import express from 'express';
 import Announcement from '../models/Announcement.js';
 
+import apicache from 'apicache';
+
 const router = express.Router();
+const cache = apicache.middleware;
 
 // @desc    Fetch all announcements
 // @route   GET /api/announcements
 // @access  Public
-router.get('/', async (req, res) => {
+router.get('/', cache('5 minutes'), async (req, res) => {
     try {
         // Sort by newest first
         const announcements = await Announcement.find({}).sort({ createdAt: -1 }).lean();
