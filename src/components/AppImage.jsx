@@ -33,31 +33,33 @@ function Image({
     const currentHost = window.location.hostname;
     const originalSrc = e.target.src;
 
-    // Resiliency: If image fails and it points to localhost/127.0.0.1, it's a cross-device access error.
-    // Replace with actual IP and try again ONCE.
-    if ((originalSrc.includes('localhost') || originalSrc.includes('127.0.0.1')) && !e.target.dataset.retried) {
+    // Resiliency: If image fails and it points to localhost/127.0.0.1, BUT we are on a different IP (mobile),
+    // it means the backend URL generation might have missed the correct IP.
+    const isLocalhost = currentHost === 'localhost' || currentHost === '127.0.0.1';
+    const srcHasLocalhost = originalSrc.includes('localhost') || originalSrc.includes('127.0.0.1');
+
+    if (!isLocalhost && srcHasLocalhost && !e.target.dataset.retried) {
       const newSrc = originalSrc.replace(/localhost|127\.0\.0\.1/, currentHost);
-      console.warn(`[Mobile Fix] Detected localhost image on network access. Redirecting to: ${newSrc}`);
+      console.warn(`[Mobile Fix] Redirecting localhost image to ${currentHost}: ${newSrc}`);
 
       e.target.dataset.retried = "true";
       e.target.src = newSrc;
       return;
     }
 
-    // Stage 1: Try local fallback
-    if (e.target.src !== "/assets/images/no_image.png") {
-      e.target.src = "/assets/images/no_image.png";
-    } else {
-      // Stage 2: Try remote placeholder if local fails
-      e.target.src = "https://via.placeholder.com/400x400?text=Image+Unavailable";
+    // Simplified Fallback: Use reliable placeholder immediately
+    // Simplified Fallback: Use reliable inline SVG immediately
+    if (!e.target.dataset.fallback) {
+      e.target.dataset.fallback = "true";
+      // Inline SVG: Gray background with "No Image" text (Offline proof)
+      e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='24' fill='%239ca3af' text-anchor='middle' dy='.3em'%3EProduct Image%3C/text%3E%3C/svg%3E";
+      e.target.onerror = null; // Prevent infinite loop
     }
-    // Prevent infinite loops
-    e.target.onerror = null;
   };
 
   return (
     <img
-      src={resolvedSrc || "https://via.placeholder.com/400x400?text=No+Image"}
+      src={resolvedSrc || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='24' fill='%239ca3af' text-anchor='middle' dy='.3em'%3EProduct Image%3C/text%3E%3C/svg%3E"}
       alt={alt}
       className={className}
       loading={loading}

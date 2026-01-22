@@ -73,11 +73,8 @@ const Collection = () => {
       );
     }
 
-    if (filters?.category !== 'all') {
-      filtered = filtered?.filter((product) =>
-        product?.category?.toLowerCase() === filters?.category?.toLowerCase()
-      );
-    }
+    // Category filter removed
+
 
     if (filters?.sizes?.length > 0) {
       filtered = filtered?.filter((product) =>
