@@ -4,7 +4,12 @@ const getApiUrl = () => {
         return import.meta.env.VITE_API_URL;
     }
 
-    // Fallback for local development (Dynamic for mobile/network access)
+    // Default to relative path in production (when served by the server)
+    if (import.meta.env.PROD) {
+        return window.location.origin;
+    }
+
+    // Fallback for local development
     return `${window.location.protocol}//${window.location.hostname}:5000`;
 };
 
