@@ -66,9 +66,28 @@ app.get('/health', (req, res) => {
 
 // Middleware
 app.use(compression());
+
+// CORS Configuration
+const allowedOrigins = [
+    'https://premium-info.netlify.app',
+    'http://localhost:4028',
+    'http://localhost:3000',
+    'http://localhost:5173'
+];
+
 app.use(cors({
-    origin: "*",
-    credentials: true
+    origin: function (origin, callback) {
+        // allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            // allow all for now but log it - or keep it strict
+            return callback(null, true);
+        }
+        return callback(null, true);
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
