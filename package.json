@@ -1,0 +1,29 @@
+{
+    "name": "premium-store-monorepo",
+    "version": "1.0.0",
+    "type": "module",
+    "engines": {
+        "node": "22.x"
+    },
+    "scripts": {
+        "install:server": "npm install --prefix server",
+        "install:client": "npm install --prefix client",
+        "build:client": "npm run build --prefix client",
+        "build": "npm run install:client && npm run build:client && npm run install:server",
+        "start": "node server/server.js",
+        "railway-build": "npm run build"
+    },
+    "dependencies": {
+        "apicache": "^1.6.3",
+        "cloudinary": "^2.9.0",
+        "compression": "^1.8.1",
+        "cors": "^2.8.5",
+        "dotenv": "^17.2.3",
+        "express": "^5.2.1",
+        "express-fileupload": "^1.5.2",
+        "mongoose": "^9.1.4",
+        "multer": "^2.0.2",
+        "sharp": "^0.34.5",
+        "streamifier": "^0.1.1"
+    }
+}
