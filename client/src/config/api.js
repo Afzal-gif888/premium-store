@@ -1,19 +1,12 @@
 const getApiUrl = () => {
-    // Check for Vite env var (Production)
-    if (import.meta.env.VITE_API_BASE_URL) {
-        return import.meta.env.VITE_API_BASE_URL;
-    }
-    if (import.meta.env.VITE_API_URL) {
-        return import.meta.env.VITE_API_URL;
-    }
+    // 1. Explicitly set VITE_API_URL (Netlify/Production)
+    if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
 
-    // Default to relative path in production (when served by the server)
-    if (import.meta.env.PROD) {
-        return window.location.origin;
-    }
+    // 2. Alternative VITE_API_BASE_URL
+    if (import.meta.env.VITE_API_BASE_URL) return import.meta.env.VITE_API_BASE_URL;
 
-    // Fallback for local development
-    return `${window.location.protocol}//${window.location.hostname}:5000`;
+    // 3. Current origin (If backend and frontend are on same host like Railway)
+    return window.location.origin;
 };
 
 export const API_BASE_URL = getApiUrl();
