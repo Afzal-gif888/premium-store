@@ -44,7 +44,7 @@ const FeaturedProducts = () => {
   }
 
   return (
-    <section id="collections" className="py-12 md:py-16 lg:py-20 bg-background">
+    <section id="collections" className="py-8 md:py-10 bg-background">
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
 
         <div className="text-center mb-8 md:mb-12 lg:mb-16 scroll-reveal">

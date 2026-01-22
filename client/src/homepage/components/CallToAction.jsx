@@ -17,7 +17,7 @@ const CallToAction = () => {
   ];
 
   return (
-    <section id="contact" className="py-12 md:py-16 lg:py-20 bg-primary text-primary-foreground relative overflow-hidden">
+    <section id="contact" className="py-8 md:py-10 bg-primary text-primary-foreground relative overflow-hidden">
       <div className="gradient-mesh opacity-10"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
