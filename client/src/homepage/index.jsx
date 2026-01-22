@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import Header from 'components/Header';
 import HeroSection from './components/HeroSection';
 import FeaturedProducts from './components/FeaturedProducts';
-import Bestsellers from './components/Bestsellers';
 import CallToAction from './components/CallToAction';
 
 const Homepage = () => {
@@ -20,7 +19,7 @@ const Homepage = () => {
         setTimeout(() => {
           element.scrollIntoView({ behavior: 'smooth' });
         }, 100);
-        // Clear state to prevent scrolling on subsequent renders check
+        // Clear state to prevent scrolling on subsequent renders
         window.history.replaceState({}, document.title);
       }
     }
@@ -40,15 +39,13 @@ const Homepage = () => {
       });
     }, observerOptions);
 
-    // Function to observe elements
     const observeElements = () => {
       const scrollRevealElements = document.querySelectorAll('.scroll-reveal');
       scrollRevealElements.forEach(el => observer.observe(el));
     };
 
-    // Initial and delayed check for dynamic content
     observeElements();
-    const timeoutId = setTimeout(observeElements, 500); // Back-up for animation timing
+    const timeoutId = setTimeout(observeElements, 500);
 
     return () => {
       clearTimeout(timeoutId);
@@ -63,7 +60,6 @@ const Homepage = () => {
       <main className="main-content">
         <HeroSection />
         <FeaturedProducts />
-        <Bestsellers />
         <CallToAction />
       </main>
     </div>

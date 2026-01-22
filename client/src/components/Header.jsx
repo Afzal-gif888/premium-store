@@ -20,7 +20,6 @@ const Header = () => {
   const navItems = [
     { id: 'announcements', label: 'Announcements', icon: 'Bell' },
     { id: 'collections', label: 'Collections', icon: 'ShoppingBag' },
-    { id: 'bestsellers', label: 'Bestsellers', icon: 'Star' },
     { id: 'contact', label: 'Contact', icon: 'Phone' },
   ];
 

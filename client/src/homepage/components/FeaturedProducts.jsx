@@ -70,6 +70,14 @@ const FeaturedProducts = () => {
                 onClick={() => handleProductClick(product._id || product.id)}>
 
                 <div className="relative overflow-hidden aspect-square bg-gray-100">
+                  {product.isBestseller && (
+                    <div className="absolute top-2 left-2 z-10">
+                      <div className="bg-accent text-accent-foreground text-[10px] md:text-xs font-bold px-2 py-1 rounded shadow-lg flex items-center gap-1">
+                        <Icon name="Star" size={12} fill="currentColor" />
+                        BESTSELLER
+                      </div>
+                    </div>
+                  )}
                   {product.image ? (
                     <Image
                       src={product.image}
