@@ -2,8 +2,11 @@
   "name": "premium-store",
   "version": "0.1.0",
   "private": true,
+  "overrides": {
+    "esbuild": "^0.25.0"
+  },
   "engines": {
-    "node": "18.x"
+    "node": ">=18.x"
   },
   "rocketCritical": {
     "dependencies": [
@@ -46,7 +49,7 @@
     "react-helmet": "^6.1.0",
     "react-hook-form": "^7.55.0",
     "react-redux": "^9.2.0",
-    "react-router-dom": "6.0.2",
+    "react-router-dom": "^6.30.3",
     "react-router-hash-link": "^2.4.3",
     "recharts": "^2.15.2",
     "redux": "^5.0.1",
@@ -92,9 +95,9 @@
     "@vitejs/plugin-react": "4.3.4",
     "autoprefixer": "10.4.2",
     "jsdom": "^27.4.0",
-    "postcss": "8.4.8",
+    "postcss": "^8.5.6",
     "tailwindcss": "3.4.6",
-    "vite": "5.0.0",
+    "vite": "^5.4.21",
     "vite-tsconfig-paths": "3.6.0",
     "vitest": "^4.0.17"
   }

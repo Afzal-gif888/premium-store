@@ -137,11 +137,11 @@
 
   /* Header Styles */
   .header {
-    @apply fixed top-0 left-0 right-0 z-40 bg-card shadow-md;
+    @apply sticky top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md shadow-sm;
   }
 
   .header-container {
-    @apply flex items-center justify-between h-16 px-6 max-w-7xl mx-auto;
+    @apply flex items-center justify-between h-14 md:h-16 px-4 md:px-6 max-w-7xl mx-auto;
   }
 
   .header-logo {
@@ -201,7 +201,7 @@
 
   /* Main Content Styles */
   .main-content {
-    @apply pt-16 min-h-screen;
+    @apply min-h-screen;
   }
 
   /* Availability Badge Styles */

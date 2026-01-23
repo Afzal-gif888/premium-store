@@ -131,7 +131,7 @@ const ProductCard = ({ product }) => {
 
         <div className="flex items-center justify-between pt-1">
           <p className="product-card-price text-lg font-black text-primary">
-            ${Number(product.price || 0).toFixed(2)}
+            ₹{Number(product.price || 0).toLocaleString('en-IN')}
           </p>
 
           <button

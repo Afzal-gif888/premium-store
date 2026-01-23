@@ -42,7 +42,7 @@ const BestsellersPage = () => {
                                     )}
                                     <span className="font-medium">{product.name}</span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${Number(product.price || 0).toFixed(2)}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{Number(product.price || 0).toLocaleString('en-IN')}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-center">
                                     <button
                                         disabled={status === 'updating'}

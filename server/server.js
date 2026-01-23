@@ -1,32 +1,19 @@
+import './config/env.js';
 import express from 'express';
 import mongoose from 'mongoose';
 import compression from 'compression';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import productRoutes from './routes/productRoutes.js';
 import announcementRoutes from './routes/announcementRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 
-import path from 'path';
-import { fileURLToPath } from 'url';
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
-const envPaths = [
-    path.join(__dirname, '.env'),
-    path.join(__dirname, '..', '.env')
-];
-
-envPaths.forEach(envPath => {
-    if (fs.existsSync(envPath)) {
-        dotenv.config({ path: envPath });
-        console.log(`[INIT] Loaded env from ${envPath}`);
-    }
-});
 
 // Validate critical environment variables
 const requiredEnvVars = ['CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];

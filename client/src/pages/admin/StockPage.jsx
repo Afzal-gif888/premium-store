@@ -125,7 +125,7 @@ const StockPage = () => {
         const sizesArray = Object.entries(formData.sizes)
             .filter(([size, stock]) => parseInt(stock || 0) > 0)
             .map(([size, stock]) => ({
-                size: `US ${size}`,
+                size: `SIZE ${size}`,
                 stock: parseInt(stock)
             }));
 
@@ -154,11 +154,10 @@ const StockPage = () => {
     const handleEdit = (product) => {
         // Convert backend data (array or object) back to form object
         const sizesObject = SIZES.reduce((acc, size) => {
-            const sizeLabel = `US ${size}`;
             let stockCount = 0;
 
             if (Array.isArray(product.sizes)) {
-                stockCount = product.sizes.find(s => s.size === sizeLabel)?.stock || 0;
+                stockCount = product.sizes.find(s => s.size === `SIZE ${size}` || s.size === `US ${size}`)?.stock || 0;
             } else if (product.sizes && typeof product.sizes === 'object') {
                 stockCount = product.sizes[size] || 0;
             }
@@ -271,7 +270,7 @@ const StockPage = () => {
                             <div className="grid grid-cols-5 gap-2">
                                 {SIZES.map(size => (
                                     <div key={size} className="flex flex-col">
-                                        <span className="text-xs text-center mb-1">US {size}</span>
+                                        <span className="text-xs text-center mb-1">SIZE {size}</span>
                                         <input
                                             type="number"
                                             min="0"
@@ -325,7 +324,7 @@ const StockPage = () => {
                                     </td>
 
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.category}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${Number(product.price || 0).toFixed(2)}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{Number(product.price || 0).toLocaleString('en-IN')}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{totalStock}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <button onClick={() => handleEdit(product)} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>

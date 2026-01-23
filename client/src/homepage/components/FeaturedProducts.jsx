@@ -44,10 +44,10 @@ const FeaturedProducts = () => {
   }
 
   return (
-    <section id="collections" className="py-8 md:py-10 bg-background">
+    <section id="collections" className="py-4 md:py-8 bg-background">
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
 
-        <div className="text-center mb-8 md:mb-12 lg:mb-16 scroll-reveal">
+        <div className="text-center mb-6 md:mb-10 scroll-reveal">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 md:mb-6">
             Collections
           </h2>
@@ -106,7 +106,7 @@ const FeaturedProducts = () => {
 
                   <div className="flex items-center justify-between">
                     <span className="product-card-price text-sm md:text-lg font-bold">
-                      ${Number(product.price || 0).toFixed(2)}
+                      ₹{Number(product.price || 0).toLocaleString('en-IN')}
                     </span>
                     <button
                       className="flex items-center gap-1 text-xs md:text-sm font-medium text-accent hover:text-accent/80 transition-colors"

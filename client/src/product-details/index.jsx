@@ -71,9 +71,9 @@ const ProductDetails = () => {
   const SIZES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 
   const sizeList = SIZES.map(sizeNum => {
-    const sizeLabel = `US ${sizeNum}`;
+    const sizeLabel = `SIZE ${sizeNum}`;
     const stockEntry = Array.isArray(product.sizes)
-      ? product.sizes.find(s => s.size === sizeLabel)
+      ? product.sizes.find(s => s.size === sizeLabel || s.size === `US ${sizeNum}`)
       : null;
 
     const stockCount = stockEntry ? stockEntry.stock : 0;
@@ -128,7 +128,7 @@ const ProductDetails = () => {
               )}
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{product.name || 'Unnamed Product'}</h1>
-            <p className="text-2xl text-gray-900 font-medium mb-8">${productPrice.toFixed(2)}</p>
+            <p className="text-2xl text-gray-900 font-medium mb-8">₹{productPrice.toLocaleString('en-IN')}</p>
 
             <div className="mb-8">
               <h3 className="text-sm font-medium text-gray-900 mb-4">Select Size</h3>
@@ -243,7 +243,7 @@ const ProductDetails = () => {
 
                     <div className="flex items-center justify-between">
                       <span className="product-card-price text-sm md:text-lg font-bold">
-                        ${Number(relatedProduct.price || 0).toFixed(2)}
+                        ₹{Number(relatedProduct.price || 0).toLocaleString('en-IN')}
                       </span>
                       <button
                         className="flex items-center gap-1 text-xs md:text-sm font-medium text-accent hover:text-accent/80 transition-colors"

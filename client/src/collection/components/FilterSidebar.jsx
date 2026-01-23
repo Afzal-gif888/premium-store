@@ -17,11 +17,11 @@ const FilterSidebar = ({
 
   const priceRanges = [
     { value: 'all', label: 'All Prices' },
-    { value: '0-100', label: 'Under $100' },
-    { value: '100-200', label: '$100 - $200' },
-    { value: '200-300', label: '$200 - $300' },
-    { value: '300-500', label: '$300 - $500' },
-    { value: '500+', label: '$500+' }
+    { value: '0-100', label: 'Under ₹2,000' },
+    { value: '100-200', label: '₹2,000 - ₹5,000' },
+    { value: '200-300', label: '₹5,000 - ₹10,000' },
+    { value: '300-500', label: '₹10,000 - ₹20,000' },
+    { value: '500+', label: 'Over ₹20,000' }
   ];
 
   const availabilityOptions = [

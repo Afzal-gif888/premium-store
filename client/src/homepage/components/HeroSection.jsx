@@ -26,9 +26,8 @@ const HeroSection = () => {
   };
 
   return (
-    <section id="announcements" className={`relative min-h-[300px] md:min-h-[350px] flex items-center overflow-hidden bg-card ${heroData.isAnnouncement ? 'bg-indigo-50/30' : ''}`}>
-      <div className="gradient-mesh opacity-20"></div>
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 text-center">
+    <section id="announcements" className="relative min-h-[220px] md:min-h-[320px] flex items-center overflow-hidden bg-white">
+      <div className="relative z-10 w-full max-w-5xl mx-auto px-4 md:px-6 lg:px-8 py-10 md:py-16 text-center">
 
         <div className="scroll-reveal space-y-4 md:space-y-6">
           {heroData.isAnnouncement && (
@@ -41,7 +40,7 @@ const HeroSection = () => {
             </div>
           )}
 
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-foreground leading-[1.1] tracking-tight">
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-extrabold text-foreground leading-[1.1] tracking-tight">
             {heroData?.title}
           </h1>
 

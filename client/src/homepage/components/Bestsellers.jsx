@@ -88,7 +88,7 @@ const Bestsellers = () => {
                                 <div className="product-card-content p-3 md:p-4">
                                     <h3 className="product-card-title text-sm md:text-base line-clamp-2 mb-2">{product.name}</h3>
                                     <div className="flex items-center justify-between">
-                                        <span className="product-card-price text-sm md:text-lg font-bold">${Number(product.price || 0).toFixed(2)}</span>
+                                        <span className="product-card-price text-sm md:text-lg font-bold">₹{Number(product.price || 0).toLocaleString('en-IN')}</span>
                                         <span className="text-[10px] md:text-xs text-primary font-medium flex items-center gap-1">View <Icon name="ArrowRight" size={12} /></span>
                                     </div>
                                 </div>

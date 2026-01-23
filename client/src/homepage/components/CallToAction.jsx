@@ -17,15 +17,13 @@ const CallToAction = () => {
   ];
 
   return (
-    <section id="contact" className="py-8 md:py-10 bg-primary text-primary-foreground relative overflow-hidden">
+    <section id="contact" className="py-4 md:py-8 bg-primary text-primary-foreground relative overflow-hidden">
       <div className="gradient-mesh opacity-10"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
         <div className="text-center scroll-reveal">
 
-          <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-accent/20 mb-6 md:mb-8">
-            <Icon name="Store" size={40} color="var(--color-accent)" strokeWidth={2} />
-          </div>
+
 
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">
             Visit Our Store Today
