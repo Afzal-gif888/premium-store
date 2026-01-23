@@ -1,13 +1,19 @@
 const getApiUrl = () => {
-    // 1. Explicitly set VITE_API_URL (Netlify/Production)
+    // 1. Explicitly set VITE_API_URL (Production)
     if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
 
+    const hostname = window.location.hostname;
+
     // 2. Local development fallback
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
         return 'http://localhost:5000';
     }
 
-    // 3. Current origin (Production/Other)
+    // 3. Current origin (Likely misconfigured production)
+    if (hostname.includes('vercel.app') || hostname.includes('netlify.app')) {
+        console.error('[CONFIG] CRITICAL: VITE_API_URL is not set. API calls will fail.');
+    }
+
     return window.location.origin;
 };
 

@@ -80,6 +80,12 @@ const StockPage = () => {
 
                 // Handle non-JSON or HTML responses (common when API_URL is wrong)
                 const contentType = res.headers.get("content-type");
+
+                if (res.status === 405) {
+                    alert('CRITICAL ERROR (405): Method Not Allowed. This happens because the Frontend is trying to call itself as the API. You MUST set VITE_API_URL in your Vercel settings to your Railway backend URL.');
+                    return;
+                }
+
                 if (contentType && contentType.indexOf("application/json") !== -1) {
                     const data = await res.json();
                     if (res.ok && data.url) {
@@ -89,15 +95,21 @@ const StockPage = () => {
                     }
                 } else {
                     const text = await res.text();
-                    if (text.includes('<!DOCTYPE html>')) {
-                        alert('CRITICAL: API URL is pointing to the Frontend instead of the Backend. Please check Vercel Environment Variables (VITE_API_URL).');
+                    // If the response is HTML, it means we hit a frontend route instead of backend
+                    if (text.includes('<!DOCTYPE html>') || API_BASE_URL === window.location.origin) {
+                        alert('CRITICAL: VITE_API_URL is missing or incorrect. The app is sending requests to the Frontend instead of the Backend. Please check Vercel Environment Variables.');
                     } else {
                         alert(`Upload failed: Unexpected server response (${res.status})`);
                     }
                 }
             } catch (error) {
                 console.error('Upload Error', error);
-                alert('Upload failed: Network error. Please ensure your Backend is running and VITE_API_URL is set correctly in Vercel settings.');
+
+                if (API_BASE_URL === window.location.origin && !window.location.hostname.includes('localhost')) {
+                    alert('CRITICAL CONFIG ERROR: VITE_API_URL is not set for production. Please go to Vercel/Netlify settings and add it.');
+                } else {
+                    alert('Upload failed: Network error. Please ensure your Backend is running and VITE_API_URL is correct.');
+                }
             } finally {
                 setIsUploading(false);
             }
