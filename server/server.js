@@ -152,8 +152,8 @@ app.use('/uploads', express.static(uploadsPath, {
 }));
 
 // Routes
-app.use('/api/products', cache('5 minutes'), productRoutes);
-app.use('/api/announcements', cache('10 minutes'), announcementRoutes);
+app.use('/api/products', cache('2 minutes'), productRoutes);
+app.use('/api/announcements', announcementRoutes); // Removed 10min cache for immediate updates
 app.use('/api/upload', uploadRoutes);
 app.use('/api/payments', paymentRoutes);
 

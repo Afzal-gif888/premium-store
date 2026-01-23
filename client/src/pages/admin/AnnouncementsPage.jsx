@@ -37,18 +37,11 @@ const AnnouncementsPage = () => {
                 description,
             };
 
-            // 1. Delete existing announcements (keeping only one active)
-            for (const item of announcements) {
-                try {
-                    await dispatch(deleteAnnouncement(item._id || item.id)).unwrap();
-                } catch (delError) {
-                    console.error('Failed to delete old announcement:', delError);
-                }
-            }
-
-            // 2. Create NEW Announcement
+            // 1. Create NEW Announcement (Backend now auto-clears old ones)
             await dispatch(addAnnouncement(newAnnouncement)).unwrap();
-            dispatch(fetchAnnouncements());
+
+            // 2. Refresh local state
+            await dispatch(fetchAnnouncements()).unwrap();
 
             // Reset
             setTitle('');
