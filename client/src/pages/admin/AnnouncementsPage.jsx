@@ -72,17 +72,19 @@ const AnnouncementsPage = () => {
     };
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-2xl font-bold">Announcements (Text-Only Hero)</h1>
-            <p className="text-gray-500">The current active announcement will be displayed prominently on the homepage.</p>
+        <div className="space-y-8">
+            <div>
+                <h1 className="text-3xl font-extrabold text-gray-900">Announcements (Text-Only Hero)</h1>
+                <p className="text-lg text-gray-500 mt-2">The current active announcement will be displayed prominently on the homepage.</p>
+            </div>
 
             <div className="bg-white p-6 rounded-lg shadow border">
                 <h2 className="text-lg font-semibold mb-4">Publish New Announcement</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium mb-1">Title (Major Offer)</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Title (Major Offer)</label>
                         <input
-                            className="w-full border p-2 rounded"
+                            className="w-full border-2 border-gray-100 p-3 rounded-xl text-lg focus:border-black outline-none transition-all"
                             value={title}
                             onChange={e => setTitle(e.target.value)}
                             placeholder="e.g. GET FLAT 50% OFF ON ALL CROCS!"
@@ -90,13 +92,13 @@ const AnnouncementsPage = () => {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Description (Secondary Details)</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Description (Secondary Details)</label>
                         <textarea
-                            className="w-full border p-2 rounded"
+                            className="w-full border-2 border-gray-100 p-3 rounded-xl text-lg focus:border-black outline-none transition-all"
                             value={description}
                             onChange={e => setDescription(e.target.value)}
                             placeholder="e.g. Valid until Sunday only. Visit us now!"
-                            rows="3"
+                            rows="4"
                         />
                     </div>
 

@@ -101,16 +101,16 @@ const PaymentsPage = () => {
     }
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-2xl font-bold">Payments Ledger</h1>
+        <div className="space-y-8">
+            <h1 className="text-3xl font-extrabold text-gray-900">Payments Ledger</h1>
 
             <div className="bg-white p-6 rounded-lg shadow border">
                 <h2 className="text-lg font-semibold mb-4">Log New Payment</h2>
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                     <div className="w-full">
-                        <label className="block text-sm font-medium mb-1">Product Name</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Product Name</label>
                         <input
-                            className="w-full border p-2 rounded"
+                            className="w-full border-2 border-gray-100 p-3 rounded-lg text-base focus:border-black outline-none transition-all"
                             value={productName}
                             onChange={e => handleProductChange(e.target.value)}
                             required
@@ -123,9 +123,9 @@ const PaymentsPage = () => {
                         </datalist>
                     </div>
                     <div className="w-full">
-                        <label className="block text-sm font-medium mb-1">Category</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Category</label>
                         <input
-                            className="w-full border p-2 rounded"
+                            className="w-full border-2 border-gray-100 p-3 rounded-lg text-base focus:border-black outline-none transition-all"
                             value={category}
                             onChange={e => setCategory(e.target.value)}
                             required
@@ -133,9 +133,9 @@ const PaymentsPage = () => {
                         />
                     </div>
                     <div className="w-full">
-                        <label className="block text-sm font-medium mb-1">Size</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Size</label>
                         <select
-                            className="w-full border p-2 rounded"
+                            className="w-full border-2 border-gray-100 p-3 rounded-lg text-base focus:border-black outline-none transition-all"
                             value={size}
                             onChange={e => setSize(e.target.value)}
                             required
@@ -145,33 +145,33 @@ const PaymentsPage = () => {
                         </select>
                     </div>
                     <div className="w-full">
-                        <label className="block text-sm font-medium mb-1">Amount (₹)</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Amount (₹)</label>
                         <input
                             type="number"
-                            className="w-full border p-2 rounded"
+                            className="w-full border-2 border-gray-100 p-3 rounded-lg text-base focus:border-black outline-none transition-all"
                             value={amount}
                             onChange={e => setAmount(e.target.value)}
                             required
                         />
                     </div>
                     <div className="lg:col-span-1">
-                        <Button type="submit" className="w-full">Log Payment</Button>
+                        <Button type="submit" className="w-full py-3 font-bold">Log Payment</Button>
                     </div>
                 </form>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow border">
-                    <p className="text-sm text-gray-500 font-medium">Total Amount Collected</p>
-                    <p className="text-3xl font-bold text-green-600 mt-1">₹{totalAmount.toLocaleString('en-IN')}</p>
+                <div className="bg-white p-8 rounded-xl shadow-lg border border-green-100">
+                    <p className="text-sm text-gray-500 font-bold uppercase tracking-wider">Total Amount Collected</p>
+                    <p className="text-4xl font-extrabold text-green-600 mt-2">₹{totalAmount.toLocaleString('en-IN')}</p>
                 </div>
-                <div className="bg-white p-6 rounded-lg shadow border">
-                    <p className="text-sm text-gray-500 font-medium">Bestselling Size</p>
-                    <p className="text-3xl font-bold text-blue-600 mt-1">{topSize}</p>
+                <div className="bg-white p-8 rounded-xl shadow-lg border border-blue-100">
+                    <p className="text-sm text-gray-500 font-bold uppercase tracking-wider">Bestselling Size</p>
+                    <p className="text-4xl font-extrabold text-blue-600 mt-2">{topSize}</p>
                 </div>
-                <div className="bg-white p-6 rounded-lg shadow border">
-                    <p className="text-sm text-gray-500 font-medium">Bestselling Category</p>
-                    <p className="text-3xl font-bold text-purple-600 mt-1">{topCategory}</p>
+                <div className="bg-white p-8 rounded-xl shadow-lg border border-purple-100">
+                    <p className="text-sm text-gray-500 font-bold uppercase tracking-wider">Bestselling Category</p>
+                    <p className="text-4xl font-extrabold text-purple-600 mt-2">{topCategory}</p>
                 </div>
             </div>
 
@@ -191,13 +191,13 @@ const PaymentsPage = () => {
                         <tbody className="bg-white divide-y divide-gray-200">
                             {safeHistory.map(item => (
                                 <tr key={item._id || item.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td className="px-6 py-6 whitespace-nowrap text-sm text-gray-500">
                                         {new Date(item.date || item.timestamp).toLocaleString()}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.productName}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.category}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.size}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-bold text-green-600">₹{item.amount?.toLocaleString('en-IN')}</td>
+                                    <td className="px-6 py-6 whitespace-nowrap text-lg font-bold text-gray-900">{item.productName}</td>
+                                    <td className="px-6 py-6 whitespace-nowrap text-sm text-gray-700">{item.category}</td>
+                                    <td className="px-6 py-6 whitespace-nowrap text-base font-medium text-gray-800">{item.size}</td>
+                                    <td className="px-6 py-6 whitespace-nowrap text-xl text-right font-extrabold text-green-600">₹{item.amount?.toLocaleString('en-IN')}</td>
                                 </tr>
                             ))}
                             {safeHistory.length === 0 && (

@@ -243,28 +243,31 @@ const StockPage = () => {
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold">Stock Management</h1>
-                    <div className="flex gap-4 mt-2 text-sm">
-                        <span className="text-gray-500">Total: <b>{stockSummary.total}</b></span>
-                        <span className="text-green-600">In Stock: <b>{stockSummary.total - stockSummary.outOfStock}</b></span>
-                        <span className="text-red-600">Out of Stock: <b>{stockSummary.outOfStock}</b></span>
+                    <h1 className="text-3xl font-bold text-gray-900">Stock Management</h1>
+                    <div className="flex gap-6 mt-3 text-base">
+                        <span className="text-gray-500">Total Products: <b className="text-black">{stockSummary.total}</b></span>
+                        <span className="text-green-600">Available: <b className="font-bold">{stockSummary.total - stockSummary.outOfStock}</b></span>
+                        <span className="text-red-600">Out of Stock: <b className="font-bold">{stockSummary.outOfStock}</b></span>
                     </div>
                 </div>
                 <div className="flex gap-2 w-full md:w-auto">
-                    <div className="relative flex-1 md:w-64">
+                    <div className="relative flex-1 md:w-80">
                         <input
                             type="text"
-                            placeholder="Search name or category..."
-                            className="w-full border p-2 pl-9 rounded-lg text-sm"
+                            placeholder="Search by name or category..."
+                            className="w-full border-2 border-gray-200 p-3 pl-10 rounded-xl text-base focus:border-black outline-none transition-all"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
-                        <div className="absolute left-3 top-2.5 text-gray-400">
-                            <Icon name="Search" size={16} />
+                        <div className="absolute left-3 top-3.5 text-gray-400">
+                            <Icon name="Search" size={20} />
                         </div>
                     </div>
-                    <Button onClick={() => { resetForm(); setIsEditing(!isEditing); }}>
-                        {isEditing ? 'Cancel' : 'Add New Product'}
+                    <Button
+                        onClick={() => { resetForm(); setIsEditing(!isEditing); }}
+                        className="px-6 py-3 text-base font-bold shadow-lg"
+                    >
+                        {isEditing ? 'Cancel' : '+ Add New Product'}
                     </Button>
                 </div>
             </div>
@@ -365,13 +368,13 @@ const StockPage = () => {
 
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-gray-100 border-b-2 border-gray-200">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Stock</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th className="px-6 py-4 text-left text-sm font-bold text-gray-600 uppercase tracking-wider">Product Info</th>
+                            <th className="px-6 py-4 text-left text-sm font-bold text-gray-600 uppercase tracking-wider">Category</th>
+                            <th className="px-6 py-4 text-left text-sm font-bold text-gray-600 uppercase tracking-wider">Price</th>
+                            <th className="px-6 py-4 text-left text-sm font-bold text-gray-600 uppercase tracking-wider">Total Stock</th>
+                            <th className="px-6 py-4 text-right text-sm font-bold text-gray-600 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -393,11 +396,23 @@ const StockPage = () => {
                                     </td>
 
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.category}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{Number(product.price || 0).toLocaleString('en-IN')}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{totalStock}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <button onClick={() => handleEdit(product)} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
-                                        <button onClick={() => handleDelete(product._id || product.id)} className="text-red-600 hover:text-red-900">Delete</button>
+                                    <td className="px-6 py-6 whitespace-nowrap text-sm text-gray-700 font-medium">₹{Number(product.price || 0).toLocaleString('en-IN')}</td>
+                                    <td className="px-6 py-6 whitespace-nowrap text-base font-bold text-gray-900">{totalStock}</td>
+                                    <td className="px-6 py-6 whitespace-nowrap text-right text-sm font-medium">
+                                        <div className="flex justify-end gap-2">
+                                            <button
+                                                onClick={() => handleEdit(product)}
+                                                className="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg hover:bg-indigo-600 hover:text-white transition-all font-bold shadow-sm"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(product._id || product.id)}
+                                                className="bg-red-50 text-red-700 px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white transition-all font-bold shadow-sm"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             );

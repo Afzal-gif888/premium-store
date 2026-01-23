@@ -20,9 +20,11 @@ const BestsellersPage = () => {
     }
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-2xl font-bold">Manage Bestsellers</h1>
-            <p className="text-gray-500">Select products to appear in the "Bestsellers" section on the homepage.</p>
+        <div className="space-y-8">
+            <div>
+                <h1 className="text-3xl font-extrabold text-gray-900">Manage Bestsellers</h1>
+                <p className="text-lg text-gray-500 mt-2">Select products to appear in the "Bestsellers" section on the homepage.</p>
+            </div>
 
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -43,7 +45,7 @@ const BestsellersPage = () => {
                                     <span className="font-medium">{product.name}</span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{Number(product.price || 0).toLocaleString('en-IN')}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-center">
+                                <td className="px-6 py-6 whitespace-nowrap text-center">
                                     <button
                                         disabled={status === 'updating'}
                                         onClick={() => {
@@ -57,12 +59,12 @@ const BestsellersPage = () => {
                                                     alert(`Failed to update ${product.name}: ${err}`);
                                                 });
                                         }}
-                                        className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${product.isBestseller ? 'bg-indigo-600' : 'bg-gray-200'} ${status === 'updating' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        className={`relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${product.isBestseller ? 'bg-indigo-600' : 'bg-gray-200'} ${status === 'updating' ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     >
                                         <span className="sr-only">Use setting</span>
                                         <span
                                             aria-hidden="true"
-                                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${product.isBestseller ? 'translate-x-5' : 'translate-x-0'}`}
+                                            className={`pointer-events-none inline-block h-7 w-7 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${product.isBestseller ? 'translate-x-6' : 'translate-x-0'}`}
                                         />
                                     </button>
                                 </td>
