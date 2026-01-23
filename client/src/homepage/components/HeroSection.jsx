@@ -44,7 +44,7 @@ const HeroSection = () => {
             {heroData?.title}
           </h1>
 
-          <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl font-bold text-black max-w-2xl mx-auto leading-relaxed">
             {heroData?.subtitle}
           </p>
         </div>

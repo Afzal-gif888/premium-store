@@ -85,7 +85,7 @@ const AnnouncementsPage = () => {
                     <div>
                         <label className="block text-sm font-medium mb-1">Description (Secondary Details)</label>
                         <textarea
-                            className="w-full border p-2 rounded focus:ring-1 focus:ring-black outline-none"
+                            className="w-full border p-2 rounded focus:ring-1 focus:ring-black outline-none font-bold text-black"
                             value={description}
                             onChange={e => setDescription(e.target.value)}
                             placeholder="e.g. Valid until Sunday only. Visit us now!"
@@ -116,7 +116,7 @@ const AnnouncementsPage = () => {
                                 <h3 className="font-bold text-xl">{announcements[0].title}</h3>
                                 <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Active</span>
                             </div>
-                            <p className="text-gray-600 text-lg">{announcements[0].description}</p>
+                            <p className="text-black text-xl font-bold">{announcements[0].description}</p>
                             <p className="text-xs text-gray-400 mt-4">Published: {new Date(announcements[0].createdAt).toLocaleString()}</p>
                         </div>
                         <button
