@@ -4,17 +4,16 @@ import Icon from "./AppIcon";
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, error: null, errorInfo: null };
   }
 
   static getDerivedStateFromError(error) {
-    return { hasError: true };
+    return { hasError: true, error };
   }
 
   componentDidCatch(error, errorInfo) {
-    error.__ErrorBoundary = true;
-    window.__COMPONENT_ERROR__?.(error, errorInfo);
-    // console.log("Error caught by ErrorBoundary:", error, errorInfo);
+    this.setState({ error, errorInfo });
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
   }
 
   render() {
@@ -32,17 +31,37 @@ class ErrorBoundary extends React.Component {
             </div>
             <div className="flex flex-col gap-1 text-center">
               <h1 className="text-2xl font-medium text-neutral-800">Something went wrong</h1>
-              <p className="text-neutral-600 text-base w w-8/12 mx-auto">We encountered an unexpected error while processing your request.</p>
+              <p className="text-neutral-600 text-base w-10/12 mx-auto">We encountered an unexpected error while processing your request.</p>
+
+              {this.state.error && (
+                <div className="mt-4 p-4 bg-red-50 border border-red-100 rounded-lg text-left overflow-auto max-h-40 max-w-lg mx-auto">
+                  <p className="text-red-700 font-bold text-sm mb-1">{this.state.error.toString()}</p>
+                  {this.state.errorInfo && (
+                    <pre className="text-red-600 text-xs leading-tight">
+                      {this.state.errorInfo.componentStack}
+                    </pre>
+                  )}
+                </div>
+              )}
             </div>
-            <div className="flex justify-center items-center mt-6">
+            <div className="flex justify-center items-center mt-6 gap-3">
               <button
                 onClick={() => {
                   window.location.href = "/";
                 }}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded flex items-center gap-2 transition-colors duration-200 shadow-sm"
+                className="bg-neutral-800 hover:bg-neutral-900 text-white font-medium py-2 px-6 rounded-lg flex items-center gap-2 transition-all duration-200 shadow-sm"
               >
-                <Icon name="ArrowLeft" size={18} color="#fff" />
-                Back
+                Home
+              </button>
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  sessionStorage.clear();
+                  window.location.reload();
+                }}
+                className="bg-white border border-neutral-300 hover:bg-neutral-50 text-neutral-700 font-medium py-2 px-6 rounded-lg flex items-center gap-2 transition-all duration-200 shadow-sm"
+              >
+                Reset App
               </button>
             </div>
           </div >

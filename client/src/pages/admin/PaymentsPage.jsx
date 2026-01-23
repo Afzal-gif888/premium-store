@@ -47,7 +47,8 @@ const PaymentsPage = () => {
     // Auto-fill category when product is selected
     const handleProductChange = (name) => {
         setProductName(name);
-        const product = products.find(p => p.name === name);
+        const safeProducts = Array.isArray(products) ? products : [];
+        const product = safeProducts.find(p => p && p.name === name);
         if (product && product.category) {
             setCategory(product.category);
         }
@@ -116,7 +117,9 @@ const PaymentsPage = () => {
                             list="product-list"
                         />
                         <datalist id="product-list">
-                            {products.map(p => <option key={p._id || p.id} value={p.name} />)}
+                            {Array.isArray(products) && products.filter(p => p && p.name).map(p => (
+                                <option key={p._id || p.id || p.name} value={p.name} />
+                            ))}
                         </datalist>
                     </div>
                     <div className="w-full">

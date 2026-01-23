@@ -51,7 +51,7 @@ const announcementSlice = createSlice({
             })
             .addCase(fetchAnnouncements.fulfilled, (state, action) => {
                 state.status = 'succeeded';
-                state.items = action.payload;
+                state.items = Array.isArray(action.payload) ? action.payload : [];
             })
             .addCase(fetchAnnouncements.rejected, (state, action) => {
                 state.status = 'failed';

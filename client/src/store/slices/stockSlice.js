@@ -71,7 +71,7 @@ const stockSlice = createSlice({
             })
             .addCase(fetchProducts.fulfilled, (state, action) => {
                 state.status = 'succeeded';
-                state.products = action.payload;
+                state.products = Array.isArray(action.payload) ? action.payload : [];
             })
             .addCase(fetchProducts.rejected, (state, action) => {
                 state.status = 'failed';
