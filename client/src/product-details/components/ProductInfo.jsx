@@ -26,11 +26,11 @@ const ProductInfo = ({ product }) => {
       {/* Price */}
       <div className="flex items-baseline gap-3">
         <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-accent">
-          ${product?.price?.toFixed(2)}
+          ₹{Number(product?.price || 0).toLocaleString('en-IN')}
         </span>
         {product?.originalPrice && (
           <span className="text-lg md:text-xl text-muted-foreground line-through">
-            ${product?.originalPrice?.toFixed(2)}
+            ₹{Number(product?.originalPrice || 0).toLocaleString('en-IN')}
           </span>
         )}
       </div>

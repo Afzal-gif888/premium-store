@@ -13,6 +13,10 @@ const paymentSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    category: {
+        type: String,
+        required: true
+    },
     date: {
         type: Date,
         default: Date.now

@@ -26,12 +26,14 @@ const PaymentsPage = () => {
     const [productName, setProductName] = useState('');
     const [size, setSize] = useState('');
     const [amount, setAmount] = useState('');
+    const [category, setCategory] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
         dispatch(addPayment({
             productName,
+            category,
             size,
             amount: parseFloat(amount)
         }));
@@ -39,7 +41,32 @@ const PaymentsPage = () => {
         setProductName('');
         setSize('');
         setAmount('');
+        setCategory('');
     };
+
+    // Auto-fill category when product is selected
+    const handleProductChange = (name) => {
+        setProductName(name);
+        const product = products.find(p => p.name === name);
+        if (product && product.category) {
+            setCategory(product.category);
+        }
+    };
+
+    // Calculations for summary
+    const totalAmount = history.reduce((sum, item) => sum + (item.amount || 0), 0);
+
+    const sizeStats = history.reduce((acc, item) => {
+        acc[item.size] = (acc[item.size] || 0) + 1;
+        return acc;
+    }, {});
+    const topSize = Object.entries(sizeStats).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+
+    const categoryStats = history.reduce((acc, item) => {
+        acc[item.category] = (acc[item.category] || 0) + 1;
+        return acc;
+    }, {});
+    const topCategory = Object.entries(categoryStats).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
 
     if (status === 'loading' && history.length === 0) {
         return <div className="flex justify-center p-10"><div className="animate-spin h-8 w-8 border-4 border-black border-t-transparent rounded-full"></div></div>;
@@ -61,13 +88,13 @@ const PaymentsPage = () => {
 
             <div className="bg-white p-6 rounded-lg shadow border">
                 <h2 className="text-lg font-semibold mb-4">Log New Payment</h2>
-                <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-4 items-end">
-                    <div className="flex-1 w-full">
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                    <div className="w-full">
                         <label className="block text-sm font-medium mb-1">Product Name</label>
                         <input
                             className="w-full border p-2 rounded"
                             value={productName}
-                            onChange={e => setProductName(e.target.value)}
+                            onChange={e => handleProductChange(e.target.value)}
                             required
                             list="product-list"
                         />
@@ -75,7 +102,17 @@ const PaymentsPage = () => {
                             {products.map(p => <option key={p._id || p.id} value={p.name} />)}
                         </datalist>
                     </div>
-                    <div className="w-full md:w-32">
+                    <div className="w-full">
+                        <label className="block text-sm font-medium mb-1">Category</label>
+                        <input
+                            className="w-full border p-2 rounded"
+                            value={category}
+                            onChange={e => setCategory(e.target.value)}
+                            required
+                            placeholder="e.g. Classic, Literide"
+                        />
+                    </div>
+                    <div className="w-full">
                         <label className="block text-sm font-medium mb-1">Size</label>
                         <select
                             className="w-full border p-2 rounded"
@@ -87,8 +124,8 @@ const PaymentsPage = () => {
                             {['2', '3', '4', '5', '6', '7', '8', '9', '10', '11'].map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                     </div>
-                    <div className="w-full md:w-40">
-                        <label className="block text-sm font-medium mb-1">Amount ($)</label>
+                    <div className="w-full">
+                        <label className="block text-sm font-medium mb-1">Amount (₹)</label>
                         <input
                             type="number"
                             className="w-full border p-2 rounded"
@@ -97,39 +134,60 @@ const PaymentsPage = () => {
                             required
                         />
                     </div>
-                    <Button type="submit">Log Payment</Button>
+                    <div className="lg:col-span-1">
+                        <Button type="submit" className="w-full">Log Payment</Button>
+                    </div>
                 </form>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white p-6 rounded-lg shadow border">
+                    <p className="text-sm text-gray-500 font-medium">Total Amount Collected</p>
+                    <p className="text-3xl font-bold text-green-600 mt-1">₹{totalAmount.toLocaleString('en-IN')}</p>
+                </div>
+                <div className="bg-white p-6 rounded-lg shadow border">
+                    <p className="text-sm text-gray-500 font-medium">Bestselling Size</p>
+                    <p className="text-3xl font-bold text-blue-600 mt-1">{topSize}</p>
+                </div>
+                <div className="bg-white p-6 rounded-lg shadow border">
+                    <p className="text-sm text-gray-500 font-medium">Bestselling Category</p>
+                    <p className="text-3xl font-bold text-purple-600 mt-1">{topCategory}</p>
+                </div>
             </div>
 
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 <h2 className="text-lg font-semibold p-4 border-b">Payment History</h2>
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Timestamp</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Size</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {history.map(item => (
-                            <tr key={item._id || item.id}>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {new Date(item.date || item.timestamp).toLocaleString()}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.productName}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.size}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-green-600">${item.amount}</td>
-                            </tr>
-                        ))}
-                        {history.length === 0 && (
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
                             <tr>
-                                <td colSpan="4" className="px-6 py-4 text-center text-gray-500">No payments recorded.</td>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Timestamp</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Size</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Amount</th>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {history.map(item => (
+                                <tr key={item._id || item.id}>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {new Date(item.date || item.timestamp).toLocaleString()}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.productName}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.category}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.size}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-bold text-green-600">₹{item.amount?.toLocaleString('en-IN')}</td>
+                                </tr>
+                            ))}
+                            {history.length === 0 && (
+                                <tr>
+                                    <td colSpan="5" className="px-6 py-4 text-center text-gray-500">No payments recorded.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

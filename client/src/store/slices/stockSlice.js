@@ -6,7 +6,7 @@ const API_URL = API_ENDPOINTS.PRODUCTS;
 
 export const fetchProducts = createAsyncThunk('stock/fetchProducts', async (_, { rejectWithValue }) => {
     try {
-        const response = await axios.get(API_URL);
+        const response = await axios.get(`${API_URL}?t=${Date.now()}`);
         return response.data;
     } catch (error) {
         console.error('Failed to fetch products:', error.message);
@@ -87,7 +87,7 @@ const stockSlice = createSlice({
                 }
             })
             .addCase(deleteProduct.fulfilled, (state, action) => {
-                state.products = state.products.filter(p => p._id !== action.payload);
+                state.products = state.products.filter(p => (p._id || p.id) !== action.payload);
             })
             .addCase(toggleBestseller.pending, (state) => {
                 state.status = 'updating';

@@ -178,10 +178,26 @@ const StockPage = () => {
     };
 
     const handleDelete = (id) => {
+        const prodId = id;
+        console.log("Frontend attempting to delete ID:", prodId);
+
+        if (!prodId) {
+            alert("Error: Product ID is missing");
+            return;
+        }
+
         if (window.confirm("Are you sure? This action cannot be undone.")) {
-            dispatch(deleteProduct(id)).then(() => {
-                dispatch(fetchProducts());
-            });
+            dispatch(deleteProduct(prodId))
+                .unwrap()
+                .then(() => {
+                    console.log("Successfully deleted product:", prodId);
+                    dispatch(fetchProducts());
+                })
+                .catch((err) => {
+                    console.error("Delete operation failed on server:", err);
+                    const errorMsg = typeof err === 'string' ? err : (err.message || "Unknown error");
+                    alert("Delete failed: " + errorMsg);
+                });
         }
     };
 
@@ -349,7 +365,7 @@ const StockPage = () => {
                                 ? product.sizes.reduce((sum, s) => sum + (s.stock || 0), 0)
                                 : 0;
                             return (
-                                <tr key={product._id}>
+                                <tr key={product._id || product.id}>
                                     <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3">
                                         {product.image && (
                                             <Image src={product.image} alt="" className="h-10 w-10 rounded object-cover" />
@@ -365,7 +381,7 @@ const StockPage = () => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{totalStock}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <button onClick={() => handleEdit(product)} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
-                                        <button onClick={() => handleDelete(product._id)} className="text-red-600 hover:text-red-900">Delete</button>
+                                        <button onClick={() => handleDelete(product._id || product.id)} className="text-red-600 hover:text-red-900">Delete</button>
                                     </td>
                                 </tr>
                             );

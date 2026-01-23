@@ -2,10 +2,12 @@ const getApiUrl = () => {
     // 1. Explicitly set VITE_API_URL (Netlify/Production)
     if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
 
-    // 2. Alternative VITE_API_BASE_URL
-    if (import.meta.env.VITE_API_BASE_URL) return import.meta.env.VITE_API_BASE_URL;
+    // 2. Local development fallback
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://localhost:5000';
+    }
 
-    // 3. Current origin (If backend and frontend are on same host like Railway)
+    // 3. Current origin (Production/Other)
     return window.location.origin;
 };
 
