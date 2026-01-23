@@ -10,6 +10,7 @@ import productRoutes from './routes/productRoutes.js';
 import announcementRoutes from './routes/announcementRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
+import apicache from 'apicache';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,9 +48,22 @@ app.get('/health', (req, res) => {
         database: dbStatusMap[dbStatus] || 'unknown',
         uptime: process.uptime(),
         env: process.env.NODE_ENV || 'development',
-        port: PORT
+        port: PORT,
+        cacheKeys: apicache.getIndex().all
     });
 });
+
+// Cache configuration
+const cache = apicache.middleware;
+export const clearCache = (name) => {
+    if (name) {
+        apicache.clear(name);
+        console.log(`[CACHE] Cleared: ${name}`);
+    } else {
+        apicache.clear();
+        console.log(`[CACHE] Cleared ALL`);
+    }
+};
 
 // Middleware
 app.use(compression());
@@ -116,8 +130,10 @@ const connectDB = async () => {
         console.log(`[DB] Attempting connection to ${maskedUri.split('/')[2]}...`);
 
         await mongoose.connect(mongoUri, {
-            serverSelectionTimeoutMS: 10000,
-            connectTimeoutMS: 15000,
+            serverSelectionTimeoutMS: 5000,
+            connectTimeoutMS: 10000,
+            socketTimeoutMS: 45000,
+            maxPoolSize: 10,
             // bufferCommands defaults to true - allows queries to queue until connection is ready
         });
         console.log(`[DB] Connected: ${mongoose.connection.host}`);
@@ -134,8 +150,8 @@ app.use('/uploads', express.static(uploadsPath, {
 }));
 
 // Routes
-app.use('/api/products', productRoutes);
-app.use('/api/announcements', announcementRoutes);
+app.use('/api/products', cache('5 minutes'), productRoutes);
+app.use('/api/announcements', cache('10 minutes'), announcementRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/payments', paymentRoutes);
 

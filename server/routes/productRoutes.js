@@ -1,12 +1,14 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import Product from '../models/Product.js';
+import apicache from 'apicache';
 
 const router = express.Router();
 
-// Helper to clear product cache (No-op now that apicache is removed)
+// Helper to clear product cache
 const clearProductCache = () => {
-    console.log('[CACHE] Cache clearing not needed (apicache disabled)');
+    apicache.clear('/api/products');
+    console.log('[CACHE] Cleared product list cache');
 };
 
 // @desc    Fetch all products

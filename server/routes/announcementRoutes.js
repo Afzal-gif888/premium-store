@@ -9,7 +9,7 @@ const cache = apicache.middleware;
 // @desc    Fetch all announcements
 // @route   GET /api/announcements
 // @access  Public
-router.get('/', cache('5 minutes'), async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         // Sort by newest first
         const announcements = await Announcement.find({}).sort({ createdAt: -1 }).lean();
@@ -33,6 +33,7 @@ router.post('/', async (req, res) => {
         });
 
         const createdAnnouncement = await announcement.save();
+        apicache.clear('/api/announcements');
         res.status(201).json(createdAnnouncement);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -47,6 +48,7 @@ router.delete('/:id', async (req, res) => {
         const announcement = await Announcement.findById(req.params.id);
         if (announcement) {
             await announcement.deleteOne();
+            apicache.clear('/api/announcements');
             res.json({ message: 'Announcement removed' });
         } else {
             res.status(404).json({ message: 'Announcement not found' });
