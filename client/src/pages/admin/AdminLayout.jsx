@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from 'store/slices/authSlice';
 import Button from 'components/ui/Button';
+import { getImageUrl } from 'config/api';
 
 const AdminLayout = () => {
     const navigate = useNavigate();
@@ -32,7 +33,7 @@ const AdminLayout = () => {
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center overflow-hidden border border-gray-100">
                                     <img
-                                        src="https://res.cloudinary.com/dh8ixjcnu/image/upload/v1737489597/premium_store_branding/store_logo.jpg"
+                                        src={getImageUrl("https://res.cloudinary.com/dh8ixjcnu/image/upload/v1737489597/premium_store_branding/store_logo.jpg", { width: 100, height: 100 })}
                                         alt="Premium Store"
                                         className="w-full h-full object-cover"
                                     />
