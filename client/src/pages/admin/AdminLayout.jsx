@@ -1,31 +1,28 @@
-import React from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from 'store/slices/authSlice';
 import Button from 'components/ui/Button';
 import { getImageUrl } from 'config/api';
+import Icon from 'components/AppIcon';
 
 const AdminLayout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const location = useLocation();
 
     const handleLogout = () => {
         dispatch(logout());
         navigate('/admin');
     };
 
-    const isActive = (path) => location.pathname.includes(path);
-
     const navItems = [
-        { label: 'Stock', path: '/admin/stock' },
-        { label: 'Bestsellers', path: '/admin/bestsellers' },
-        { label: 'Announcements', path: '/admin/announcements' },
-        { label: 'Payments', path: '/admin/payments' },
+        { label: 'Stock', path: '/admin/stock', icon: 'Package' },
+        { label: 'Bestseller', path: '/admin/bestsellers', icon: 'Star' },
+        { label: 'Offers/TV', path: '/admin/announcements', icon: 'Bell' },
+        { label: 'Payments', path: '/admin/payments', icon: 'CreditCard' },
     ];
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 flex flex-col">
             <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
@@ -38,20 +35,21 @@ const AdminLayout = () => {
                                         className="w-full h-full object-cover"
                                     />
                                 </div>
-                                <span className="font-bold text-xl tracking-tight">Admin Panel</span>
+                                <span className="font-bold text-xl tracking-tight hidden sm:block">Admin Panel</span>
                             </div>
                             <div className="hidden md:ml-10 md:flex md:space-x-4">
                                 {navItems.map((item) => (
-                                    <button
+                                    <NavLink
                                         key={item.path}
-                                        onClick={() => navigate(item.path)}
-                                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive(item.path)
-                                            ? 'bg-black text-white'
-                                            : 'text-gray-600 hover:bg-gray-100'
-                                            }`}
+                                        to={item.path}
+                                        className={({ isActive }) => `
+                                            flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors
+                                            ${isActive ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-100'}
+                                        `}
                                     >
+                                        <Icon name={item.icon} size={16} />
                                         {item.label}
-                                    </button>
+                                    </NavLink>
                                 ))}
                             </div>
                         </div>
@@ -78,13 +76,17 @@ const AdminLayout = () => {
                 <div className="md:hidden border-t border-gray-200">
                     <div className="flex justify-around p-2">
                         {navItems.map((item) => (
-                            <button
+                            <NavLink
                                 key={item.path}
-                                onClick={() => navigate(item.path)}
-                                className={`text-xs p-1 ${isActive(item.path) ? 'font-bold' : ''}`}
+                                to={item.path}
+                                className={({ isActive }) => `
+                                    flex flex-col items-center p-1 transition-colors
+                                    ${isActive ? 'text-black scale-105' : 'text-gray-500'}
+                                `}
                             >
-                                {item.label}
-                            </button>
+                                <Icon name={item.icon} size={20} />
+                                <span className="text-[10px] font-medium mt-1">{item.label}</span>
+                            </NavLink>
                         ))}
                     </div>
                 </div>

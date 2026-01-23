@@ -45,19 +45,14 @@ const Routes = () => {
             {/* Admin Routes */}
             <Route path="/admin" element={<LoginPage />} />
 
-            <Route path="/admin/*" element={
-              <ProtectedRoute>
-                <RouterRoutes>
-                  <Route element={<AdminLayout />}>
-                    <Route path="stock" element={<StockPage />} />
-                    <Route path="announcements" element={<AnnouncementsPage />} />
-                    <Route path="bestsellers" element={<BestsellersPage />} />
-                    <Route path="payments" element={<PaymentsPage />} />
-                    <Route path="*" element={<Navigate to="stock" replace />} />
-                  </Route>
-                </RouterRoutes>
-              </ProtectedRoute>
-            } />
+            <Route element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+              <Route path="/admin/stock" element={<StockPage />} />
+              <Route path="/admin/announcements" element={<AnnouncementsPage />} />
+              <Route path="/admin/bestsellers" element={<BestsellersPage />} />
+              <Route path="/admin/payments" element={<PaymentsPage />} />
+              {/* Fallback for admin sub-paths */}
+              <Route path="/admin/*" element={<Navigate to="/admin/stock" replace />} />
+            </Route>
 
             <Route path="*" element={<NotFound />} />
           </RouterRoutes>
