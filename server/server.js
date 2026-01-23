@@ -116,9 +116,9 @@ const connectDB = async () => {
         console.log(`[DB] Attempting connection to ${maskedUri.split('/')[2]}...`);
 
         await mongoose.connect(mongoUri, {
-            serverSelectionTimeoutMS: 5000,
-            connectTimeoutMS: 10000,
-            bufferCommands: false, // DON'T buffer if not connected!
+            serverSelectionTimeoutMS: 10000,
+            connectTimeoutMS: 15000,
+            // bufferCommands defaults to true - allows queries to queue until connection is ready
         });
         console.log(`[DB] Connected: ${mongoose.connection.host}`);
     } catch (error) {
