@@ -8,6 +8,14 @@ import { API_ENDPOINTS } from 'config/api';
 
 const SIZES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
 
+const initialFormState = {
+    name: '',
+    category: '',
+    price: '',
+    image: '',
+    sizes: SIZES.reduce((acc, size) => ({ ...acc, [size]: 0 }), {})
+};
+
 const StockPage = () => {
     const dispatch = useDispatch();
     const stockState = useSelector(state => state.stock) || { products: [], status: 'idle' };
@@ -17,15 +25,8 @@ const StockPage = () => {
     const [editId, setEditId] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false); // NEW: Track processing
     const [searchTerm, setSearchTerm] = useState('');
-
-    const initialFormState = {
-        name: '',
-        category: '',
-        price: '',
-        image: '',
-        sizes: SIZES.reduce((acc, size) => ({ ...acc, [size]: 0 }), {})
-    };
 
     const [formData, setFormData] = useState(initialFormState);
 
@@ -56,9 +57,6 @@ const StockPage = () => {
         );
     }
 
-
-
-
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -69,26 +67,24 @@ const StockPage = () => {
             }
 
             setIsUploading(true);
-            const formData = new FormData();
-            formData.append('image', file);
+            const uploadFormData = new FormData();
+            uploadFormData.append('image', file);
 
             try {
-                // Immediate Preview logic (Lazy loading for UI)
+                // Immediate Preview logic
                 const localPreviewUrl = URL.createObjectURL(file);
                 setFormData(prev => ({ ...prev, image: localPreviewUrl }));
 
-                // Use centralized endpoint
                 const res = await fetch(API_ENDPOINTS.UPLOAD, {
                     method: 'POST',
-                    body: formData
+                    body: uploadFormData
                 });
 
-                // Handle non-JSON or HTML responses
                 const contentType = res.headers.get("content-type");
 
                 if (res.status === 405) {
-                    URL.revokeObjectURL(localPreviewUrl); // Cleanup
-                    alert('CRITICAL ERROR (405): Method Not Allowed. This happens because the Frontend is trying to call itself as the API. You MUST set VITE_API_URL in your Vercel settings to your Railway backend URL.');
+                    URL.revokeObjectURL(localPreviewUrl);
+                    alert('CRITICAL ERROR (405): Method Not Allowed. Check VITE_API_URL.');
                     return;
                 }
 
@@ -96,29 +92,17 @@ const StockPage = () => {
                     const data = await res.json();
                     if (res.ok && data.url) {
                         setFormData(prev => ({ ...prev, image: data.url }));
-                        // We keep the local URL until the state settles, but revoked below
                     } else {
                         alert(`Upload failed: ${data.message || 'Server error'}`);
-                        setFormData(prev => ({ ...prev, image: '' })); // Revert on failure
+                        setFormData(prev => ({ ...prev, image: '' }));
                     }
                 } else {
-                    const text = await res.text();
                     URL.revokeObjectURL(localPreviewUrl);
-                    // If the response is HTML, it means we hit a frontend route instead of backend
-                    if (text.includes('<!DOCTYPE html>') || API_BASE_URL === window.location.origin) {
-                        alert('CRITICAL: VITE_API_URL is missing or incorrect. The app is sending requests to the Frontend instead of the Backend. Please check Vercel Environment Variables.');
-                    } else {
-                        alert(`Upload failed: Unexpected server response (${res.status})`);
-                    }
+                    alert(`Upload failed: Unexpected server response`);
                 }
             } catch (error) {
                 console.error('Upload Error', error);
-
-                if (API_BASE_URL === window.location.origin && !window.location.hostname.includes('localhost')) {
-                    alert('CRITICAL CONFIG ERROR: VITE_API_URL is not set for production. Please go to Vercel/Netlify settings and add it.');
-                } else {
-                    alert('Upload failed: Network error. Please ensure your Backend is running and VITE_API_URL is correct.');
-                }
+                alert('Upload failed: Network error.');
             } finally {
                 setIsUploading(false);
             }
@@ -126,14 +110,12 @@ const StockPage = () => {
     };
 
     const handleRemoveImage = () => {
-        setFormData(prev => ({
-            ...prev,
-            image: '' // CHANGED: Clear single image
-        }));
+        setFormData(prev => ({ ...prev, image: '' }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
 
         // Validation
         const totalStock = Object.values(formData.sizes).reduce((a, b) => a + parseInt(b || 0), 0);
@@ -141,12 +123,11 @@ const StockPage = () => {
             alert("At least one size must have quantity greater than zero.");
             return;
         }
-        if (!formData.image) { // CHANGED: Check single image
+        if (!formData.image) {
             alert("Image is required.");
             return;
         }
 
-        // CRITICAL: Convert sizes object to array format for backend
         const sizesArray = Object.entries(formData.sizes)
             .filter(([size, stock]) => parseInt(stock || 0) > 0)
             .map(([size, stock]) => ({
@@ -158,35 +139,38 @@ const StockPage = () => {
             name: formData.name,
             category: formData.category,
             price: parseFloat(formData.price),
-            image: formData.image, // CHANGED: Single image
-            sizes: sizesArray // CHANGED: Array format
-            // REMOVED: isBestseller
+            image: formData.image,
+            sizes: sizesArray
         };
 
-        if (editId) {
-            dispatch(updateProduct({ id: editId, data: productData })).then(() => {
-                dispatch(fetchProducts());
-            });
-        } else {
-            dispatch(addProduct(productData)).then(() => {
-                dispatch(fetchProducts());
-            });
-        }
+        setIsSubmitting(true);
+        try {
+            if (editId) {
+                await dispatch(updateProduct({ id: editId, data: productData })).unwrap();
+            } else {
+                await dispatch(addProduct(productData)).unwrap();
+            }
 
-        resetForm();
+            // Success: Reset and refresh
+            resetForm();
+            dispatch(fetchProducts());
+            alert(editId ? 'Product Updated!' : 'Product Added!');
+        } catch (error) {
+            console.error('Submit Error:', error);
+            alert('Failed to save product: ' + (error.message || 'Server error'));
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleEdit = (product) => {
-        // Convert backend data (array or object) back to form object
         const sizesObject = SIZES.reduce((acc, size) => {
             let stockCount = 0;
-
             if (Array.isArray(product.sizes)) {
                 stockCount = product.sizes.find(s => s.size === `SIZE ${size}` || s.size === `US ${size}`)?.stock || 0;
             } else if (product.sizes && typeof product.sizes === 'object') {
                 stockCount = product.sizes[size] || 0;
             }
-
             return { ...acc, [size]: stockCount };
         }, {});
 
@@ -194,35 +178,19 @@ const StockPage = () => {
             name: product.name,
             category: product.category,
             price: product.price,
-            image: product.image || '', // CHANGED: Single image
+            image: product.image || '',
             sizes: sizesObject
-            // REMOVED: isBestseller
         });
         setEditId(product._id);
         setIsEditing(true);
     };
 
     const handleDelete = (id) => {
-        const prodId = id;
-        console.log("Frontend attempting to delete ID:", prodId);
-
-        if (!prodId) {
-            alert("Error: Product ID is missing");
-            return;
-        }
-
         if (window.confirm("Are you sure? This action cannot be undone.")) {
-            dispatch(deleteProduct(prodId))
+            dispatch(deleteProduct(id))
                 .unwrap()
-                .then(() => {
-                    console.log("Successfully deleted product:", prodId);
-                    dispatch(fetchProducts());
-                })
-                .catch((err) => {
-                    console.error("Delete operation failed on server:", err);
-                    const errorMsg = typeof err === 'string' ? err : (err.message || "Unknown error");
-                    alert("Delete failed: " + errorMsg);
-                });
+                .then(() => dispatch(fetchProducts()))
+                .catch((err) => alert("Delete failed: " + err));
         }
     };
 
@@ -230,6 +198,11 @@ const StockPage = () => {
         setFormData(initialFormState);
         setIsEditing(false);
         setEditId(null);
+    };
+
+    const openAddForm = () => {
+        resetForm();
+        setIsEditing(true);
     };
 
 
@@ -272,10 +245,10 @@ const StockPage = () => {
                         </div>
                     </div>
                     <Button
-                        onClick={() => { resetForm(); setIsEditing(!isEditing); }}
+                        onClick={openAddForm}
                         className="px-6 py-3 text-base font-bold shadow-lg"
                     >
-                        {isEditing ? 'Cancel' : '+ Add New Product'}
+                        {isEditing && !editId ? 'Cancel' : '+ Add New Product'}
                     </Button>
                 </div>
             </div>
@@ -367,8 +340,10 @@ const StockPage = () => {
                         </div>
 
                         <div className="flex gap-2 justify-end pt-4">
-                            <Button type="button" variant="outline" onClick={resetForm}>Cancel</Button>
-                            <Button type="submit">Save Product</Button>
+                            <Button type="button" variant="outline" onClick={resetForm} disabled={isSubmitting}>Cancel</Button>
+                            <Button type="submit" loading={isSubmitting}>
+                                {isSubmitting ? (editId ? 'Updating...' : 'Adding...') : 'Save Product'}
+                            </Button>
                         </div>
                     </form>
                 </div>

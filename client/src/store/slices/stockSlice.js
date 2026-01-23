@@ -77,15 +77,33 @@ const stockSlice = createSlice({
                 state.status = 'failed';
                 state.error = (typeof action.payload === 'string' ? action.payload : action.payload?.message) || action.error.message;
             })
+            .addCase(addProduct.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
             .addCase(addProduct.fulfilled, (state, action) => {
+                state.status = 'succeeded';
                 state.products.push(action.payload);
             })
+            .addCase(addProduct.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload || action.error.message;
+            })
+            .addCase(updateProduct.pending, (state) => {
+                state.status = 'updating';
+                state.error = null;
+            })
             .addCase(updateProduct.fulfilled, (state, action) => {
+                state.status = 'succeeded';
                 const updated = action.payload;
                 const index = state.products.findIndex(p => (p._id || p.id) === (updated._id || updated.id));
                 if (index !== -1) {
                     state.products[index] = updated;
                 }
+            })
+            .addCase(updateProduct.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload || action.error.message;
             })
             .addCase(deleteProduct.pending, (state, action) => {
                 const id = action.meta.arg;
