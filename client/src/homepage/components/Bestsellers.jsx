@@ -72,8 +72,8 @@ const Bestsellers = () => {
                                         <Image
                                             src={product.image}
                                             alt={product.name}
-                                            width={500}
-                                            height={500}
+                                            width={800}
+                                            height={800}
                                             className="product-card-image hover:scale-110 transition-transform duration-500"
                                         />
                                     ) : (

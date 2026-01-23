@@ -64,9 +64,11 @@ router.post('/', (req, res, next) => {
                             timeout: 15000,
                             // Offload optimization to Cloudinary
                             transformation: [
-                                { width: 1200, height: 1200, crop: "limit" },
-                                { quality: "auto" },
-                                { fetch_format: "auto" }
+                                { width: 1600, height: 1600, crop: "pad", background: "white" },
+                                { quality: "auto:best" },
+                                { fetch_format: "auto" },
+                                { effect: "improve:vibrant" },
+                                { effect: "sharpen:80" }
                             ]
                         },
                         (error, result) => {
@@ -95,8 +97,12 @@ router.post('/', (req, res, next) => {
             // Stage 2: Local Processing Fallback (Sharp)
             // Only optimize locally if we have to store locally
             const optimizedBuffer = await sharp(buffer)
-                .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
-                .webp({ quality: 80 })
+                .resize(1600, 1600, {
+                    fit: 'contain',
+                    background: { r: 255, g: 255, b: 255, alpha: 1 }
+                })
+                .sharpen()
+                .webp({ quality: 85 })
                 .toBuffer();
 
             const sanitizedOriginalName = req.file.originalname.replace(/[^a-z0-9.]/gi, '_').toLowerCase();
