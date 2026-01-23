@@ -68,9 +68,9 @@ const Footer = () => {
     <footer className="bg-card border-t border-border py-8">
       <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-6">
 
-        {/* Helpline + Socials Group */}
+        {/* Contact Us + Socials Group */}
         <div className="flex items-center gap-8">
-          {/* Helpline */}
+          {/* Contact Us */}
           <a
             href={storeLinks.callUrl}
             className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
@@ -78,7 +78,7 @@ const Footer = () => {
             <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
               <Icon name="Phone" size={20} />
             </div>
-            <span className="font-semibold hidden sm:inline">Helpline</span>
+            <span className="font-semibold hidden sm:inline">Contact Us</span>
           </a>
 
           {/* Divider */}

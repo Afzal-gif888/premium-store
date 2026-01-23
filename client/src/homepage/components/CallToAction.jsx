@@ -72,7 +72,7 @@ const CallToAction = () => {
             <div className="flex flex-col items-center gap-3">
               <Icon name="Clock" size={32} color="var(--color-accent)" />
               <h3 className="text-lg md:text-xl font-semibold text-primary-foreground">Open Hours</h3>
-              <p className="text-sm md:text-base opacity-80 text-center">Mon-Sat: 10AM-8PM<br />Sun: 10AM-6PM</p>
+              <p className="text-sm md:text-base opacity-80 text-center">Mon-Sat: 10AM-8PM<br />Sun: 8:30AM-6PM</p>
             </div>
 
             <div className="flex flex-col items-center gap-4">
@@ -81,7 +81,7 @@ const CallToAction = () => {
                 className="flex flex-col items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer"
               >
                 <Icon name="Phone" size={32} color="var(--color-accent)" />
-                <h3 className="text-lg md:text-xl font-semibold text-primary-foreground">Help Line</h3>
+                <h3 className="text-lg md:text-xl font-semibold text-primary-foreground">Contact Us</h3>
                 <p className="text-sm md:text-base opacity-80">+91 8074463123</p>
               </a>
 

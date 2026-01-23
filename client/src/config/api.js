@@ -24,7 +24,7 @@ export const getImageUrl = (path, options = {}) => {
     if (path.includes('cloudinary.com') && (options.width || options.height)) {
         const parts = path.split('/upload/');
         if (parts.length === 2) {
-            let transformation = `c_limit,q_auto,f_auto`;
+            let transformation = `c_limit,q_auto,f_auto,dpr_auto`;
             if (options.width) transformation += `,w_${options.width}`;
             if (options.height) transformation += `,h_${options.height}`;
             return `${parts[0]}/upload/${transformation}/${parts[1]}`;

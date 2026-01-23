@@ -9,6 +9,23 @@ export default defineConfig({
   build: {
     outDir: "build",
     chunkSizeWarningLimit: 2000,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['framer-motion', 'lucide-react', 'class-variance-authority', 'clsx', 'tailwind-merge'],
+          'vendor-redux': ['@reduxjs/toolkit', 'react-redux', 'redux'],
+          'vendor-charts': ['recharts', 'd3'],
+        }
+      }
+    }
   },
   resolve: {
     alias: {

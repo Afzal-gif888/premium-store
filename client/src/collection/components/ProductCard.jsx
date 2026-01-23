@@ -74,6 +74,8 @@ const ProductCard = ({ product }) => {
         <Image
           src={mainImage}
           alt={imageAlt}
+          width={500}
+          height={500}
           className="product-card-image transition-transform duration-500 group-hover:scale-110"
         />
 

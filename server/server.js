@@ -102,9 +102,6 @@ try {
     console.error('[CRITICAL] Failed to initialize uploads directory:', err);
 }
 
-// Serve static uploads
-app.use('/uploads', express.static(uploadsPath));
-
 // Database Connection
 const connectDB = async () => {
     try {
@@ -130,15 +127,25 @@ const connectDB = async () => {
     }
 };
 
+// Serve static uploads with caching
+app.use('/uploads', express.static(uploadsPath, {
+    maxAge: '1d',
+    etag: true
+}));
+
 // Routes
 app.use('/api/products', productRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/payments', paymentRoutes);
 
-// Static files & SPA Fallback
+// Static files & SPA Fallback with aggressive caching for build assets
 const buildPath = path.join(__dirname, '../client/build');
-app.use(express.static(buildPath));
+app.use(express.static(buildPath, {
+    maxAge: '1y',
+    immutable: true,
+    index: false
+}));
 
 // Redirect all non-API requests to index.html for React Router to handle
 app.use((req, res, next) => {

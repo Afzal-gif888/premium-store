@@ -191,13 +191,50 @@ const StockPage = () => {
         setEditId(null);
     };
 
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const filteredProducts = products.filter(p =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const stockSummary = {
+        total: products.length,
+        outOfStock: products.filter(p => (Array.isArray(p.sizes) ? p.sizes.reduce((sum, s) => sum + s.stock, 0) : 0) === 0).length,
+        lowStock: products.filter(p => {
+            const sum = Array.isArray(p.sizes) ? p.sizes.reduce((sum, s) => sum + s.stock, 0) : 0;
+            return sum > 0 && sum <= 5;
+        }).length
+    };
+
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">Stock Management</h1>
-                <Button onClick={() => { resetForm(); setIsEditing(!isEditing); }}>
-                    {isEditing ? 'Cancel' : 'Add New Product'}
-                </Button>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold">Stock Management</h1>
+                    <div className="flex gap-4 mt-2 text-sm">
+                        <span className="text-gray-500">Total: <b>{stockSummary.total}</b></span>
+                        <span className="text-green-600">In Stock: <b>{stockSummary.total - stockSummary.outOfStock}</b></span>
+                        <span className="text-red-600">Out of Stock: <b>{stockSummary.outOfStock}</b></span>
+                    </div>
+                </div>
+                <div className="flex gap-2 w-full md:w-auto">
+                    <div className="relative flex-1 md:w-64">
+                        <input
+                            type="text"
+                            placeholder="Search name or category..."
+                            className="w-full border p-2 pl-9 rounded-lg text-sm"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        <div className="absolute left-3 top-2.5 text-gray-400">
+                            <Icon name="Search" size={16} />
+                        </div>
+                    </div>
+                    <Button onClick={() => { resetForm(); setIsEditing(!isEditing); }}>
+                        {isEditing ? 'Cancel' : 'Add New Product'}
+                    </Button>
+                </div>
             </div>
 
             {isEditing && (
@@ -306,7 +343,7 @@ const StockPage = () => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {products.map(product => {
+                        {filteredProducts.map(product => {
                             // Calculate total stock from sizes array
                             const totalStock = Array.isArray(product.sizes)
                                 ? product.sizes.reduce((sum, s) => sum + (s.stock || 0), 0)
@@ -333,9 +370,11 @@ const StockPage = () => {
                                 </tr>
                             );
                         })}
-                        {products.length === 0 && (
+                        {filteredProducts.length === 0 && (
                             <tr>
-                                <td colSpan="5" className="px-6 py-4 text-center text-gray-500">No products in stock. Add one to get started.</td>
+                                <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                                    {searchTerm ? 'No products matching your search.' : 'No products in stock. Add one to get started.'}
+                                </td>
                             </tr>
                         )}
                     </tbody>

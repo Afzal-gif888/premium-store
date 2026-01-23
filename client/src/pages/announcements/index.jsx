@@ -144,15 +144,15 @@ const Announcements = () => {
                       <div className="flex flex-col gap-3 text-sm md:text-base text-muted-foreground">
                         <div className="flex items-center gap-3">
                           <Icon name="MapPin" size={20} color="var(--color-primary)" />
-                          <span>123 Premium Avenue, Fashion District, NY 10001</span>
+                          <span>Beside Bharath Theatre Street, Upstairs Of RI Fashion, Mydukur</span>
                         </div>
                         <div className="flex items-center gap-3">
                           <Icon name="Phone" size={20} color="var(--color-primary)" />
-                          <span>(555) 123-4567</span>
+                          <span>+91 8074463123</span>
                         </div>
                         <div className="flex items-center gap-3">
                           <Icon name="Clock" size={20} color="var(--color-primary)" />
-                          <span>Mon-Fri: 9 AM - 9 PM | Sat: 9 AM - 10 PM | Sun: 10 AM - 8 PM</span>
+                          <span>Mon-Sat: 10 AM - 8 PM | Sun: 8:30 AM -6 PM</span>
                         </div>
                       </div>
                     </div>
@@ -165,7 +165,7 @@ const Announcements = () => {
                         Browse Collection
                       </button>
                       <button
-                        onClick={() => window.location.href = 'tel:5551234567'}
+                        onClick={() => window.location.href = 'tel:+918074463123'}
                         className="cta-button cta-button-secondary w-full md:w-auto">
 
                         Call Us Now

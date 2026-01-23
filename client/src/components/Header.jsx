@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Icon from './AppIcon';
+import { getImageUrl } from 'config/api';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -30,7 +31,7 @@ const Header = () => {
           <Link to="/" className="header-logo flex items-center gap-2">
             <div className="flex items-center justify-center w-12 h-12 overflow-hidden rounded-full border border-gray-100 shadow-sm bg-white shrink-0">
               <img
-                src="https://res.cloudinary.com/dh8ixjcnu/image/upload/v1737489597/premium_store_branding/store_logo.jpg"
+                src={getImageUrl("https://res.cloudinary.com/dh8ixjcnu/image/upload/v1737489597/premium_store_branding/store_logo.jpg", { width: 100, height: 100 })}
                 alt="Premium Store Logo"
                 className="w-full h-full object-cover"
               />
