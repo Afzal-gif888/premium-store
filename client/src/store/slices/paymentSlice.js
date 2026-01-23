@@ -39,14 +39,16 @@ const paymentSlice = createSlice({
             })
             .addCase(fetchPayments.fulfilled, (state, action) => {
                 state.status = 'succeeded';
-                state.history = action.payload;
+                state.history = Array.isArray(action.payload) ? action.payload : [];
             })
             .addCase(fetchPayments.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload;
             })
             .addCase(addPayment.fulfilled, (state, action) => {
-                state.history.unshift(action.payload);
+                if (action.payload && typeof action.payload === 'object' && !Array.isArray(action.payload)) {
+                    state.history.unshift(action.payload);
+                }
             });
     },
 });

@@ -53,20 +53,37 @@ const PaymentsPage = () => {
         }
     };
 
-    // Calculations for summary
-    const totalAmount = history.reduce((sum, item) => sum + (item.amount || 0), 0);
+    // Calculations for summary - with defensive checks
+    const safeHistory = Array.isArray(history) ? history : [];
 
-    const sizeStats = history.reduce((acc, item) => {
-        acc[item.size] = (acc[item.size] || 0) + 1;
+    const totalAmount = safeHistory.reduce((sum, item) => {
+        const val = parseFloat(item.amount);
+        return sum + (isNaN(val) ? 0 : val);
+    }, 0);
+
+    const sizeStats = safeHistory.reduce((acc, item) => {
+        if (item.size) {
+            acc[item.size] = (acc[item.size] || 0) + 1;
+        }
         return acc;
     }, {});
-    const topSize = Object.entries(sizeStats).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
 
-    const categoryStats = history.reduce((acc, item) => {
-        acc[item.category] = (acc[item.category] || 0) + 1;
+    const sizeEntries = Object.entries(sizeStats);
+    const topSize = sizeEntries.length > 0
+        ? sizeEntries.sort((a, b) => b[1] - a[1])[0][0]
+        : 'N/A';
+
+    const categoryStats = safeHistory.reduce((acc, item) => {
+        if (item.category) {
+            acc[item.category] = (acc[item.category] || 0) + 1;
+        }
         return acc;
     }, {});
-    const topCategory = Object.entries(categoryStats).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+
+    const categoryEntries = Object.entries(categoryStats);
+    const topCategory = categoryEntries.length > 0
+        ? categoryEntries.sort((a, b) => b[1] - a[1])[0][0]
+        : 'N/A';
 
     if (status === 'loading' && history.length === 0) {
         return <div className="flex justify-center p-10"><div className="animate-spin h-8 w-8 border-4 border-black border-t-transparent rounded-full"></div></div>;
@@ -169,7 +186,7 @@ const PaymentsPage = () => {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {history.map(item => (
+                            {safeHistory.map(item => (
                                 <tr key={item._id || item.id}>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {new Date(item.date || item.timestamp).toLocaleString()}
@@ -180,7 +197,7 @@ const PaymentsPage = () => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-bold text-green-600">₹{item.amount?.toLocaleString('en-IN')}</td>
                                 </tr>
                             ))}
-                            {history.length === 0 && (
+                            {safeHistory.length === 0 && (
                                 <tr>
                                     <td colSpan="5" className="px-6 py-4 text-center text-gray-500">No payments recorded.</td>
                                 </tr>

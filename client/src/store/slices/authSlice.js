@@ -1,8 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+// Safe localStorage access (prevents SSR crashes)
+const getStorageItem = (key) => {
+    try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+            return localStorage.getItem(key);
+        }
+    } catch (e) {
+        console.warn('localStorage not available');
+    }
+    return null;
+};
+
 const initialState = {
-    isAuthenticated: localStorage.getItem('isAdminAuthenticated') === 'true',
-    user: localStorage.getItem('adminUser') || null,
+    isAuthenticated: getStorageItem('isAdminAuthenticated') === 'true',
+    user: getStorageItem('adminUser') || null,
 };
 
 const authSlice = createSlice({
