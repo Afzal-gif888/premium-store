@@ -72,6 +72,8 @@ app.use(compression());
 const allowedOrigins = [
     'https://premium-info.netlify.app',
     'https://premium-store.netlify.app',
+    'https://premium-store-pi.vercel.app',
+    /\.vercel\.app$/, // Allow all vercel subdomains
     'http://localhost:4028',
     'http://localhost:3000',
     'http://localhost:5173'

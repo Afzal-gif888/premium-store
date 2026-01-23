@@ -76,24 +76,28 @@ const StockPage = () => {
                 const res = await fetch(API_ENDPOINTS.UPLOAD, {
                     method: 'POST',
                     body: formData
-                    // Note: Browser automatically sets multipart/form-data with boundary
                 });
 
-                const data = await res.json();
-
-                if (res.ok && data.url) {
-                    setFormData(prev => ({
-                        ...prev,
-                        image: data.url
-                    }));
+                // Handle non-JSON or HTML responses (common when API_URL is wrong)
+                const contentType = res.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    const data = await res.json();
+                    if (res.ok && data.url) {
+                        setFormData(prev => ({ ...prev, image: data.url }));
+                    } else {
+                        alert(`Upload failed: ${data.message || 'Server error'}`);
+                    }
                 } else {
-                    const errorMsg = data.message || 'Server returned an error';
-                    console.error('Upload Failed:', data);
-                    alert(`Upload failed: ${errorMsg}`);
+                    const text = await res.text();
+                    if (text.includes('<!DOCTYPE html>')) {
+                        alert('CRITICAL: API URL is pointing to the Frontend instead of the Backend. Please check Vercel Environment Variables (VITE_API_URL).');
+                    } else {
+                        alert(`Upload failed: Unexpected server response (${res.status})`);
+                    }
                 }
             } catch (error) {
                 console.error('Upload Error', error);
-                alert('Upload failed: Network error or server timeout. Please try again.');
+                alert('Upload failed: Network error. Please ensure your Backend is running and VITE_API_URL is set correctly in Vercel settings.');
             } finally {
                 setIsUploading(false);
             }
