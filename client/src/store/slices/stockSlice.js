@@ -81,9 +81,10 @@ const stockSlice = createSlice({
                 state.products.push(action.payload);
             })
             .addCase(updateProduct.fulfilled, (state, action) => {
-                const index = state.products.findIndex(p => p._id === action.payload._id);
+                const updated = action.payload;
+                const index = state.products.findIndex(p => (p._id || p.id) === (updated._id || updated.id));
                 if (index !== -1) {
-                    state.products[index] = action.payload;
+                    state.products[index] = updated;
                 }
             })
             .addCase(deleteProduct.fulfilled, (state, action) => {
@@ -94,9 +95,10 @@ const stockSlice = createSlice({
             })
             .addCase(toggleBestseller.fulfilled, (state, action) => {
                 state.status = 'succeeded';
-                const index = state.products.findIndex(p => p._id === action.payload._id);
+                const updated = action.payload;
+                const index = state.products.findIndex(p => (p._id || p.id) === (updated._id || updated.id));
                 if (index !== -1) {
-                    state.products[index] = action.payload;
+                    state.products[index] = updated;
                 }
             })
             .addCase(toggleBestseller.rejected, (state, action) => {

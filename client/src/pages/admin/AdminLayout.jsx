@@ -24,47 +24,49 @@ const AdminLayout = () => {
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
             <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
-                <div className="w-full mx-auto px-4 md:px-8">
-                    <div className="flex justify-between h-20">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between h-16">
                         <div className="flex items-center">
                             <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center overflow-hidden border border-gray-100">
+                                <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center overflow-hidden border border-gray-100">
                                     <img
                                         src={getImageUrl("https://res.cloudinary.com/dh8ixjcnu/image/upload/v1737489597/premium_store_branding/store_logo.jpg", { width: 100, height: 100 })}
                                         alt="Premium Store"
                                         className="w-full h-full object-cover"
                                     />
                                 </div>
-                                <span className="font-bold text-2xl tracking-tight">Admin Panel</span>
+                                <span className="font-bold text-xl tracking-tight hidden sm:block">Admin Panel</span>
                             </div>
-                            <div className="hidden lg:ml-12 lg:flex lg:space-x-6">
+                            <div className="hidden md:ml-10 md:flex md:space-x-2">
                                 {navItems.map((item) => (
                                     <NavLink
                                         key={item.path}
                                         to={item.path}
                                         className={({ isActive }) => `
-                                            flex items-center gap-2 px-4 py-2 rounded-lg text-base font-bold transition-all
-                                            ${isActive ? 'bg-black text-white shadow-lg scale-105' : 'text-gray-600 hover:bg-gray-100'}
+                                            flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors
+                                            ${isActive ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-100'}
                                         `}
                                     >
-                                        <Icon name={item.icon} size={20} />
+                                        <Icon name={item.icon} size={16} />
                                         {item.label}
                                     </NavLink>
                                 ))}
                             </div>
                         </div>
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-3">
                             <Button
                                 variant="outline"
+                                size="sm"
                                 onClick={() => navigate('/')}
-                                className="font-bold"
+                                className="font-medium"
                             >
                                 View Store
                             </Button>
                             <Button
                                 variant="ghost"
+                                size="sm"
                                 onClick={handleLogout}
-                                className="text-red-500 hover:text-red-700 hover:bg-red-50 font-bold"
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50 font-medium"
                             >
                                 Logout
                             </Button>
@@ -72,25 +74,25 @@ const AdminLayout = () => {
                     </div>
                 </div>
                 {/* Mobile Menu */}
-                <div className="lg:hidden border-t border-gray-200">
-                    <div className="flex justify-around p-3">
+                <div className="md:hidden border-t border-gray-200">
+                    <div className="flex justify-around p-2">
                         {navItems.map((item) => (
                             <NavLink
                                 key={item.path}
                                 to={item.path}
                                 className={({ isActive }) => `
-                                    flex flex-col items-center p-2 rounded-xl transition-all
-                                    ${isActive ? 'text-black bg-gray-100 font-bold scale-110' : 'text-gray-500'}
+                                    flex flex-col items-center p-1 transition-colors
+                                    ${isActive ? 'text-black' : 'text-gray-500'}
                                 `}
                             >
-                                <Icon name={item.icon} size={24} />
-                                <span className="text-xs mt-1">{item.label}</span>
+                                <Icon name={item.icon} size={18} />
+                                <span className="text-[10px] font-medium mt-1">{item.label}</span>
                             </NavLink>
                         ))}
                     </div>
                 </div>
             </nav>
-            <main className="w-full px-4 md:px-8 lg:px-12 py-8">
+            <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
                 <Outlet />
             </main>
         </div>

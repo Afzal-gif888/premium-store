@@ -65,7 +65,7 @@ const announcementSlice = createSlice({
                 state.error = action.payload || action.error.message;
             })
             .addCase(deleteAnnouncement.fulfilled, (state, action) => {
-                state.items = state.items.filter(a => a._id !== action.payload);
+                state.items = state.items.filter(a => (a._id || a.id) !== action.payload);
             })
             .addCase(deleteAnnouncement.rejected, (state, action) => {
                 state.status = 'failed';
