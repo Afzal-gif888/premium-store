@@ -8,7 +8,8 @@ const router = express.Router();
 // Helper to clear product cache
 const clearProductCache = () => {
     apicache.clear('/api/products');
-    console.log('[CACHE] Cleared product list cache');
+    apicache.clear('/api/products/collections');
+    console.log('[CACHE] Cleared all product-related caches');
 };
 
 // @desc    Fetch all products

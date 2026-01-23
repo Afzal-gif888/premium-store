@@ -17,13 +17,7 @@ const StockPage = () => {
     const [editId, setEditId] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
-
-    // Ensure products are loaded
-    React.useEffect(() => {
-        if (status === 'idle') {
-            dispatch(fetchProducts());
-        }
-    }, [status, dispatch]);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const initialFormState = {
         name: '',
@@ -34,6 +28,13 @@ const StockPage = () => {
     };
 
     const [formData, setFormData] = useState(initialFormState);
+
+    // Ensure products are loaded
+    React.useEffect(() => {
+        if (status === 'idle') {
+            dispatch(fetchProducts());
+        }
+    }, [status, dispatch]);
 
     if (status === 'loading' && products.length === 0) {
         return (
@@ -223,7 +224,6 @@ const StockPage = () => {
         setEditId(null);
     };
 
-    const [searchTerm, setSearchTerm] = useState('');
 
     const filteredProducts = products.filter(p =>
         p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
