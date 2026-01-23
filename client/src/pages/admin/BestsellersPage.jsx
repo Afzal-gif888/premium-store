@@ -47,7 +47,6 @@ const BestsellersPage = () => {
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{Number(product.price || 0).toLocaleString('en-IN')}</td>
                                 <td className="px-6 py-6 whitespace-nowrap text-center">
                                     <button
-                                        disabled={status === 'updating'}
                                         onClick={() => {
                                             const originalStatus = product.isBestseller;
                                             dispatch(toggleBestseller({ id: product._id || product.id, isBestseller: !originalStatus }))
@@ -59,7 +58,7 @@ const BestsellersPage = () => {
                                                     alert(`Failed to update ${product.name}: ${err}`);
                                                 });
                                         }}
-                                        className={`relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${product.isBestseller ? 'bg-indigo-600' : 'bg-gray-200'} ${status === 'updating' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        className={`relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${product.isBestseller ? 'bg-indigo-600' : 'bg-gray-200'}`}
                                     >
                                         <span className="sr-only">Use setting</span>
                                         <span

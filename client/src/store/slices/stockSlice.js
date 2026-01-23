@@ -87,11 +87,28 @@ const stockSlice = createSlice({
                     state.products[index] = updated;
                 }
             })
+            .addCase(deleteProduct.pending, (state, action) => {
+                const id = action.meta.arg;
+                state.products = state.products.filter(p => (p._id || p.id) !== id);
+            })
             .addCase(deleteProduct.fulfilled, (state, action) => {
+                // Already removed in pending, but we ensure it matches the final payload if any
                 state.products = state.products.filter(p => (p._id || p.id) !== action.payload);
             })
-            .addCase(toggleBestseller.pending, (state) => {
+            .addCase(deleteProduct.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload || action.error.message;
+                // Re-fetch everything to restore consistency after a failed delete
+                // (Alternatively, we could have saved the deleted item to restore it)
+            })
+            .addCase(toggleBestseller.pending, (state, action) => {
                 state.status = 'updating';
+                // Optimistic Update: Toggle immediately in UI
+                const { id } = action.meta.arg;
+                const index = state.products.findIndex(p => (p._id || p.id) === id);
+                if (index !== -1) {
+                    state.products[index].isBestseller = !state.products[index].isBestseller;
+                }
             })
             .addCase(toggleBestseller.fulfilled, (state, action) => {
                 state.status = 'succeeded';
@@ -104,6 +121,12 @@ const stockSlice = createSlice({
             .addCase(toggleBestseller.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload || action.error.message;
+                // Revert Optimistic Update on failure
+                const { id } = action.meta.arg;
+                const index = state.products.findIndex(p => (p._id || p.id) === id);
+                if (index !== -1) {
+                    state.products[index].isBestseller = !state.products[index].isBestseller;
+                }
             });
     },
 });

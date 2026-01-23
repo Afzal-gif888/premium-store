@@ -73,16 +73,21 @@ const StockPage = () => {
             formData.append('image', file);
 
             try {
+                // Immediate Preview logic (Lazy loading for UI)
+                const localPreviewUrl = URL.createObjectURL(file);
+                setFormData(prev => ({ ...prev, image: localPreviewUrl }));
+
                 // Use centralized endpoint
                 const res = await fetch(API_ENDPOINTS.UPLOAD, {
                     method: 'POST',
                     body: formData
                 });
 
-                // Handle non-JSON or HTML responses (common when API_URL is wrong)
+                // Handle non-JSON or HTML responses
                 const contentType = res.headers.get("content-type");
 
                 if (res.status === 405) {
+                    URL.revokeObjectURL(localPreviewUrl); // Cleanup
                     alert('CRITICAL ERROR (405): Method Not Allowed. This happens because the Frontend is trying to call itself as the API. You MUST set VITE_API_URL in your Vercel settings to your Railway backend URL.');
                     return;
                 }
@@ -91,11 +96,14 @@ const StockPage = () => {
                     const data = await res.json();
                     if (res.ok && data.url) {
                         setFormData(prev => ({ ...prev, image: data.url }));
+                        // We keep the local URL until the state settles, but revoked below
                     } else {
                         alert(`Upload failed: ${data.message || 'Server error'}`);
+                        setFormData(prev => ({ ...prev, image: '' })); // Revert on failure
                     }
                 } else {
                     const text = await res.text();
+                    URL.revokeObjectURL(localPreviewUrl);
                     // If the response is HTML, it means we hit a frontend route instead of backend
                     if (text.includes('<!DOCTYPE html>') || API_BASE_URL === window.location.origin) {
                         alert('CRITICAL: VITE_API_URL is missing or incorrect. The app is sending requests to the Frontend instead of the Backend. Please check Vercel Environment Variables.');
